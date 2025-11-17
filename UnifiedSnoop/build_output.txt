@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  UnifiedSnoop -> C:\Users\isaace\SnoopCivil3D\UnifiedSnoop\bin\x64\Release\net8.0-windows\win-x64\UnifiedSnoop.dll
+  UnifiedSnoop -> C:\Users\isaace\SnoopCivil3D\UnifiedSnoop\bin\x64\Release\net48\UnifiedSnoop.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.62

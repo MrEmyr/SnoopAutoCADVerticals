@@ -1,0 +1,277 @@
+// Example: Version-Compatible Code Template
+// This file shows how to write code that works across AutoCAD/Civil 3D 2024-2026
+// Copy this pattern when creating new files
+
+using System;
+using System.Collections.Generic;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+
+#if NET8_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
+
+namespace UnifiedSnoop.Core.Helpers
+{
+    /// <summary>
+    /// Helper class for version detection and compatibility
+    /// </summary>
+    public static class VersionHelper
+    {
+        #region Version Detection
+
+        /// <summary>
+        /// Gets the AutoCAD version number (24, 25, or 26)
+        /// </summary>
+        /// <returns>Version number (e.g., 24 for AutoCAD 2024)</returns>
+        public static int GetAutoCADVersion()
+        {
+            return Application.Version.Major;
+        }
+
+        /// <summary>
+        /// Checks if running in AutoCAD/Civil 3D 2024
+        /// </summary>
+        public static bool IsVersion2024()
+        {
+            return GetAutoCADVersion() == 24;
+        }
+
+        /// <summary>
+        /// Checks if running in AutoCAD/Civil 3D 2025 or later
+        /// </summary>
+        public static bool IsVersion2025OrGreater()
+        {
+            return GetAutoCADVersion() >= 25;
+        }
+
+        /// <summary>
+        /// Gets the .NET runtime information
+        /// </summary>
+        public static string GetRuntimeInfo()
+        {
+            #if NET48
+            return ".NET Framework 4.8 (Build for 2024)";
+            #elif NET8_0_OR_GREATER
+            return ".NET 8.0 (Build for 2025+)";
+            #else
+            return "Unknown Runtime";
+            #endif
+        }
+
+        /// <summary>
+        /// Gets complete version information
+        /// </summary>
+        public static string GetVersionInfo()
+        {
+            var acadVer = GetAutoCADVersion();
+            var runtime = GetRuntimeInfo();
+            return $"AutoCAD {acadVer}xx / {runtime}";
+        }
+
+        #endregion
+
+        #region Feature Detection
+
+        /// <summary>
+        /// Checks if a feature is available in the current version
+        /// </summary>
+        public static bool IsFeatureAvailable(string featureName)
+        {
+            var version = GetAutoCADVersion();
+
+            switch (featureName.ToUpperInvariant())
+            {
+                case "MODERN_API":
+                    return version >= 25;
+
+                case "LEGACY_API":
+                    return version >= 24;
+
+                default:
+                    return false;
+            }
+        }
+
+        #endregion
+
+        #region Conditional Examples
+
+        /// <summary>
+        /// Example: Properties with nullable types (conditional)
+        /// </summary>
+        public class ExampleData
+        {
+            #if NET8_0_OR_GREATER
+            // .NET 8.0: Use nullable reference types
+            public string? Name { get; set; }
+            public string? Description { get; set; }
+            
+            [NotNull]
+            public string Type { get; set; } = string.Empty;
+            #else
+            // .NET Framework 4.8: Traditional approach
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public string Type { get; set; }
+            #endif
+
+            public int Value { get; set; }
+        }
+
+        /// <summary>
+        /// Example: Method with version-specific implementation
+        /// </summary>
+        public static void ProcessWithVersionCheck()
+        {
+            var version = GetAutoCADVersion();
+
+            if (version >= 25)
+            {
+                // Use 2025+ specific approach
+                ProcessModern();
+            }
+            else if (version == 24)
+            {
+                // Use 2024 compatible approach
+                ProcessLegacy();
+            }
+            else
+            {
+                throw new NotSupportedException($"AutoCAD version {version} is not supported");
+            }
+        }
+
+        private static void ProcessModern()
+        {
+            #if NET8_0_OR_GREATER
+            Console.WriteLine("Using modern .NET 8.0 features");
+            // Use modern features here
+            #endif
+        }
+
+        private static void ProcessLegacy()
+        {
+            #if NET48
+            Console.WriteLine("Using .NET Framework 4.8 compatible code");
+            // Use legacy-compatible code here
+            #else
+            // If built for .NET 8.0 but running in 2024, use compatible approach
+            Console.WriteLine("Using compatibility mode");
+            #endif
+        }
+
+        /// <summary>
+        /// Example: Return type that works in both frameworks
+        /// </summary>
+        public static List<string> GetCompatibleList()
+        {
+            // List<T> works in both .NET Framework 4.8 and .NET 8.0
+            var list = new List<string>();
+            
+            #if NET48
+            list.Add("Running on .NET Framework 4.8");
+            #elif NET8_0_OR_GREATER
+            list.Add("Running on .NET 8.0");
+            #endif
+            
+            return list;
+        }
+
+        /// <summary>
+        /// Example: Using statements conditional on framework
+        /// </summary>
+        public static void ProcessTransaction(Database db)
+        {
+            #if NET48
+            // .NET Framework 4.8 - traditional using
+            using (Transaction trans = db.TransactionManager.StartTransaction())
+            {
+                // Process
+                trans.Commit();
+            }
+            #elif NET8_0_OR_GREATER
+            // .NET 8.0 - can use using declaration
+            using Transaction trans = db.TransactionManager.StartTransaction();
+            // Process
+            trans.Commit();
+            #endif
+        }
+
+        #endregion
+
+        #region Exception Handling
+
+        /// <summary>
+        /// Example: Exception handling compatible across versions
+        /// </summary>
+        public static bool TryGetObject(ObjectId id, Transaction trans, out DBObject? obj)
+        {
+            #if NET8_0_OR_GREATER
+            obj = null;
+            #else
+            obj = default(DBObject);
+            #endif
+
+            try
+            {
+                obj = trans.GetObject(id, OpenMode.ForRead);
+                return true;
+            }
+            catch (Autodesk.AutoCAD.Runtime.Exception)
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region String Handling
+
+        /// <summary>
+        /// Example: String operations compatible across versions
+        /// </summary>
+        public static string FormatValue(object? value)
+        {
+            if (value == null)
+            {
+                #if NET48
+                return string.Empty;
+                #elif NET8_0_OR_GREATER
+                return string.Empty;
+                #endif
+            }
+
+            #if NET8_0_OR_GREATER
+            // Can use modern string interpolation features
+            return $"{value}";
+            #else
+            // Use traditional string formatting
+            return string.Format("{0}", value);
+            #endif
+        }
+
+        #endregion
+    }
+}
+
+/*
+ * USAGE GUIDELINES:
+ * 
+ * 1. Copy this file structure when creating new classes
+ * 2. Use conditional compilation for version-specific code
+ * 3. Always test both net48 and net8.0-windows builds
+ * 4. Provide fallbacks for features not available in 2024
+ * 5. Use runtime version checks for dynamic behavior
+ * 
+ * BUILD TARGETS:
+ * - net48: For AutoCAD/Civil 3D 2024
+ * - net8.0-windows: For AutoCAD/Civil 3D 2025+
+ * 
+ * COMPILATION SYMBOLS:
+ * - NET48: Defined when building for .NET Framework 4.8
+ * - NET8_0_OR_GREATER: Defined when building for .NET 8.0+
+ * - ACAD2024: Defined for 2024 build
+ * - ACAD2025_OR_GREATER: Defined for 2025+ build
+ */
+

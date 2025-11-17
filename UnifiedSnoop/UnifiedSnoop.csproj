@@ -1,0 +1,90 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <!-- Multi-targeting: .NET Framework 4.8 (AutoCAD/Civil 3D 2024) and .NET 8.0 (2025+) -->
+    <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+    <RootNamespace>UnifiedSnoop</RootNamespace>
+    <AssemblyName>UnifiedSnoop</AssemblyName>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Platforms>x64</Platforms>
+    <LangVersion>12.0</LangVersion>
+  </PropertyGroup>
+
+  <!-- .NET 8.0 specific settings (AutoCAD/Civil 3D 2025+) -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <DefineConstants>$(DefineConstants);NET8_0_OR_GREATER;ACAD2025_OR_GREATER</DefineConstants>
+  </PropertyGroup>
+
+  <!-- .NET Framework 4.8 specific settings (AutoCAD/Civil 3D 2024) -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <DefineConstants>$(DefineConstants);NET48;ACAD2024</DefineConstants>
+    <!-- Suppress MSB3245 for Civil 3D DLLs that are available at runtime but may not be found during build -->
+    <NoWarn>$(NoWarn);MSB3245</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0</Version>
+    <Copyright>Copyright © 2025</Copyright>
+    <Company>AutoCAD Development</Company>
+    <Product>UnifiedSnoop - AutoCAD and Civil 3D Inspector</Product>
+    <Description>Unified inspection tool for AutoCAD and Civil 3D objects</Description>
+  </PropertyGroup>
+
+  <!-- Package References for .NET 8.0 (AutoCAD/Civil 3D 2025+) -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+    <PackageReference Include="AutoCAD.NET" Version="25.0.1" />
+    <PackageReference Include="AutoCAD.NET.Model" Version="25.0.0" />
+    <PackageReference Include="Civil3D.NET" Version="13.8.280" />
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+  </ItemGroup>
+
+  <!-- References for .NET Framework 4.8 (AutoCAD/Civil 3D 2024) -->
+  <!-- Note: AutoCAD 2024 DLLs must be referenced from installation directory -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <!-- AutoCAD 2024 Core DLLs (typical installation path) -->
+    <!-- Users will need to adjust these paths based on their AutoCAD installation -->
+    <Reference Include="acdbmgd" HintPath="C:\Program Files\Autodesk\AutoCAD 2024\acdbmgd.dll" Private="False" />
+    <Reference Include="acmgd" HintPath="C:\Program Files\Autodesk\AutoCAD 2024\acmgd.dll" Private="False" />
+    <Reference Include="AcCoreMgd" HintPath="C:\Program Files\Autodesk\AutoCAD 2024\AcCoreMgd.dll" Private="False" />
+    
+    <!-- Civil 3D 2024 DLLs (typical installation path) -->
+    <Reference Include="AeccDbMgd" HintPath="C:\Program Files\Autodesk\AutoCAD 2024\C3D\AeccDbMgd.dll" Private="False" />
+    <Reference Include="AecBaseMgd" HintPath="C:\Program Files\Autodesk\AutoCAD 2024\C3D\AecBaseMgd.dll" Private="False" />
+    
+    <!-- System References -->
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Embedded Resources -->
+    <EmbeddedResource Include="Resources\**\*.*" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+</Project>
+

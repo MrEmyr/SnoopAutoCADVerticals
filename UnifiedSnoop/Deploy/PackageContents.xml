@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage 
+    SchemaVersion="1.0" 
+    ProductType="Application" 
+    Name="UnifiedSnoop" 
+    Description="Unified object inspector for AutoCAD and Civil 3D"
+    Author="AutoCAD Development"
+    ProductCode="{B5E8F3A7-9C4D-4E2B-A8F1-3D5E6F7C8D9A}"
+    Version="2.1.0"
+    AppVersion="2.1.0">
+
+  <CompanyDetails 
+    Name="AutoCAD Development" 
+    Url="https://github.com" 
+    Email="support@example.com"/>
+
+  <RuntimeRequirements 
+    OS="Win64" 
+    Platform="AutoCAD"/>
+
+  <!-- AutoCAD/Civil 3D 2024 (.NET Framework 4.8) -->
+  <Components Description="UnifiedSnoop for AutoCAD/Civil 3D 2024">
+    <RuntimeRequirements 
+      OS="Win64" 
+      Platform="AutoCAD" 
+      SeriesMin="R24.0" 
+      SeriesMax="R24.1"/>
+    <ComponentEntry 
+      AppName="UnifiedSnoop2024" 
+      ModuleName="./Contents/2024/UnifiedSnoop.dll" 
+      AppDescription="UnifiedSnoop for AutoCAD/Civil 3D 2024" 
+      LoadOnCommandInvocation="True"
+      LoadOnAutoCADStartup="True">
+      <Commands GroupName="UnifiedSnoop">
+        <Command Global="SNOOP" Local="SNOOP"/>
+      </Commands>
+    </ComponentEntry>
+  </Components>
+
+  <!-- AutoCAD/Civil 3D 2025+ (.NET 8.0) -->
+  <Components Description="UnifiedSnoop for AutoCAD/Civil 3D 2025+">
+    <RuntimeRequirements 
+      OS="Win64" 
+      Platform="AutoCAD" 
+      SeriesMin="R25.0"/>
+    <ComponentEntry 
+      AppName="UnifiedSnoop2025" 
+      ModuleName="./Contents/2025/UnifiedSnoop.dll" 
+      AppDescription="UnifiedSnoop for AutoCAD/Civil 3D 2025+" 
+      LoadOnCommandInvocation="True"
+      LoadOnAutoCADStartup="True">
+      <Commands GroupName="UnifiedSnoop">
+        <Command Global="SNOOP" Local="SNOOP"/>
+      </Commands>
+    </ComponentEntry>
+  </Components>
+
+</ApplicationPackage>
+

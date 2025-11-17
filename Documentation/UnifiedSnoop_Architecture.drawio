@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-11-14T00:00:00.000Z" agent="5.0" version="22.0.0" etag="architecture" type="device">
+  <diagram id="UnifiedSnoop-Architecture" name="Solution Architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="UnifiedSnoop - Solution Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="520" y="20" width="560" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Subtitle -->
+        <mxCell id="subtitle" value="AutoCAD + Civil 3D Unified Inspection Tool (.NET 8.0 / C#)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="520" y="60" width="560" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 1: AutoCAD/Civil3D Platform -->
+        <mxCell id="platform-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="1440" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="platform-title" value="Platform Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="130" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- AutoCAD API -->
+        <mxCell id="autocad-api" value="AutoCAD .NET API&#xa;v25.0.1&#xa;&#xa;• DatabaseServices&#xa;• EditorInput&#xa;• ApplicationServices&#xa;• Geometry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="200" y="160" width="240" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Civil3D API -->
+        <mxCell id="civil3d-api" value="Civil 3D .NET API&#xa;v13.8.280&#xa;&#xa;• DatabaseServices&#xa;• ApplicationServices&#xa;• Styles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="480" y="160" width="240" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- .NET 8.0 Runtime -->
+        <mxCell id="dotnet-runtime" value=".NET 8.0 Runtime&#xa;&#xa;• Reflection&#xa;• Collections&#xa;• WinForms" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="760" y="160" width="240" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Platform Detection -->
+        <mxCell id="platform-detection" value="Platform Detection&#xa;&#xa;• AutoCAD Detect&#xa;• Civil 3D Detect&#xa;• Dynamic Loading" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="160" width="240" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 2: Application Layer -->
+        <mxCell id="app-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="280" width="1440" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="app-title" value="Application Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="290" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- App Components -->
+        <mxCell id="app-cs" value="App.cs&#xa;&#xa;IExtensionApplication&#xa;• Initialize()&#xa;• Terminate()&#xa;• Register Collectors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="200" y="330" width="180" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="commands-cs" value="Commands.cs&#xa;&#xa;• SnoopDatabase&#xa;• SnoopEntities&#xa;• SnoopCivil3DDoc&#xa;• SnoopAlignments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="330" width="180" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="context-menu" value="ContextMenu.cs&#xa;&#xa;Right-Click Menu&#xa;• AutoCAD Options&#xa;• Civil 3D Options&#xa;• Dynamic Menus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="620" y="330" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 3: Core Infrastructure -->
+        <mxCell id="core-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="460" width="1440" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="core-title" value="Core Infrastructure Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="470" width="250" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Collectors -->
+        <mxCell id="collectors" value="Collectors&#xa;&#xa;ICollector Interface&#xa;• ReflectionCollector&#xa;• PropertyCollector&#xa;• MethodCollector" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="120" y="510" width="200" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Models -->
+        <mxCell id="data-models" value="Data Models&#xa;&#xa;• PropertyData&#xa;• ObjectNode&#xa;• CollectionInfo&#xa;• TreeNodeData" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="350" y="510" width="200" height="130" as="geometry" />
+        </mxCell>
+        
+        <!-- Helpers -->
+        <mxCell id="helpers" value="Helpers&#xa;&#xa;• TransactionHelper&#xa;• ObjectHelper&#xa;• ReflectionHelper&#xa;• FormatHelper" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="580" y="510" width="200" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 4: Services Layer -->
+        <mxCell id="services-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="700" width="700" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="services-title" value="Services Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="710" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Service Components -->
+        <mxCell id="discovery-service" value="ObjectDiscoveryService&#xa;&#xa;• FindObjects()&#xa;• GetCollections()&#xa;• BuildObjectTree()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="120" y="750" width="200" height="90" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="extraction-service" value="PropertyExtractionService&#xa;&#xa;• ExtractProperties()&#xa;• FormatValues()&#xa;• GetCollections()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="350" y="750" width="200" height="90" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="platform-service" value="PlatformDetectionService&#xa;&#xa;• IsCivil3DAvailable()&#xa;• IsCivil3DDocument()&#xa;• LoadCollectors()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="580" y="750" width="200" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 5: Inspectors Layer -->
+        <mxCell id="inspectors-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="820" y="700" width="700" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="inspectors-title" value="Inspectors Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="840" y="710" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- AutoCAD Inspectors -->
+        <mxCell id="autocad-inspectors" value="AutoCAD Inspectors&#xa;&#xa;• DatabaseInspector&#xa;• EntityInspector&#xa;• BlockInspector&#xa;• LayerInspector&#xa;• ...more" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="860" y="750" width="280" height="90" as="geometry" />
+        </mxCell>
+        
+        <!-- Civil3D Inspectors -->
+        <mxCell id="civil3d-inspectors" value="Civil 3D Inspectors&#xa;&#xa;• CivilDocumentInspector&#xa;• AlignmentInspector&#xa;• SurfaceInspector&#xa;• CorridorInspector&#xa;• PipeNetworkInspector&#xa;• ...more" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="750" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 6: UI Layer -->
+        <mxCell id="ui-layer" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="900" width="1440" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="ui-title" value="User Interface Layer (Civil3DSnoop Style)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="100" y="910" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Main Form -->
+        <mxCell id="main-form" value="MainSnoopForm&#xa;(Based on Civil3DSnoop UI)&#xa;&#xa;┌──────────────┬─────────────┐&#xa;│  TreeView    │  ListView   │&#xa;│  (Objects)   │ (Properties)│&#xa;│              │             │&#xa;│  • Database  │ Name | Type │&#xa;│  • Entities  │ Value       │&#xa;│  • Civil3D   │             │&#xa;└──────────────┴─────────────┘&#xa;&#xa;[Select Object] [Select File]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="120" y="950" width="500" height="150" as="geometry" />
+        </mxCell>
+        
+        <!-- UI Components -->
+        <mxCell id="ui-components" value="UI Components&#xa;&#xa;• ObjectTreeView&#xa;  - Hierarchical display&#xa;  - AutoCAD objects&#xa;  - Civil 3D objects&#xa;&#xa;• PropertyListView&#xa;  - Property grid&#xa;  - Value formatting&#xa;  - Collection handling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="660" y="950" width="280" height="150" as="geometry" />
+        </mxCell>
+        
+        <!-- UI Features -->
+        <mxCell id="ui-features" value="Features&#xa;&#xa;• Select entities on-screen&#xa;• Browse database objects&#xa;• Inspect Civil 3D objects&#xa;• Navigate collections&#xa;• Export properties&#xa;• Search/Filter&#xa;• Open external files" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="980" y="950" width="280" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Data Flow Arrows -->
+        <!-- Platform to App -->
+        <mxCell id="arrow1" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="autocad-api" target="app-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="240" as="sourcePoint" />
+            <mxPoint x="370" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow2" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="civil3d-api" target="app-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="600" y="240" as="sourcePoint" />
+            <mxPoint x="650" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- App to Core -->
+        <mxCell id="arrow3" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="app-layer" target="core-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="800" y="430" as="sourcePoint" />
+            <mxPoint x="850" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Core to Services -->
+        <mxCell id="arrow4" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="core-layer" target="services-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="670" as="sourcePoint" />
+            <mxPoint x="450" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Core to Inspectors -->
+        <mxCell id="arrow5" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="core-layer" target="inspectors-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1000" y="670" as="sourcePoint" />
+            <mxPoint x="1050" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Services/Inspectors to UI -->
+        <mxCell id="arrow6" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="services-layer" target="ui-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="870" as="sourcePoint" />
+            <mxPoint x="450" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow7" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1" source="inspectors-layer" target="ui-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1100" y="870" as="sourcePoint" />
+            <mxPoint x="1150" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Labels on arrows -->
+        <mxCell id="label1" value="API Calls" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="330" y="250" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label2" value="Commands" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="750" y="430" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label3" value="Data Collection" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="350" y="670" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label4" value="Type Inspection" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="670" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label5" value="Display Data" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="350" y="870" width="100" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="120" width="200" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="130" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Legend items -->
+        <mxCell id="legend1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="170" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend1-text" value="AutoCAD Related" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="165" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="200" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend2-text" value="Civil 3D Related" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="195" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="230" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend3-text" value="Application Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="225" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend4" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="260" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend4-text" value="Core Infrastructure" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="255" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend5" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="290" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend5-text" value="Services" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="285" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend6" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="320" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend6-text" value="Detection/Utilities" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="315" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend7" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1320" y="365" as="sourcePoint" />
+            <mxPoint x="1350" y="365" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend7-text" value="Data Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="350" width="130" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend8" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="390" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend8-text" value="Layer Boundary" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="385" width="130" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Key Features Box -->
+        <mxCell id="features-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="480" width="200" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="features-title" value="Key Features" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="490" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="features-list" value="✓ Zero original code changes&#xa;✓ Civil3DSnoop UI as base&#xa;✓ Extended for AutoCAD&#xa;✓ Reflection-based discovery&#xa;✓ Dynamic platform detection&#xa;✓ Unified experience&#xa;✓ C# only (.NET 8.0)&#xa;✓ Modular &amp; extensible&#xa;✓ Transaction management&#xa;✓ Export capabilities" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="525" width="180" height="125" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+

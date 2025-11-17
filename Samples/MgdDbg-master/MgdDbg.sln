@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MgdDbg", "MgdDbg.csproj", "{C9B52572-4947-4AD7-86CE-EFB7A036FA9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9B52572-4947-4AD7-86CE-EFB7A036FA9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9B52572-4947-4AD7-86CE-EFB7A036FA9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9B52572-4947-4AD7-86CE-EFB7A036FA9F}.Debug|x64.ActiveCfg = Debug|x64
+		{C9B52572-4947-4AD7-86CE-EFB7A036FA9F}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB034296-D0C1-4DD0-AE0E-7C0C9A4E1E73}
+	EndGlobalSection
+EndGlobal

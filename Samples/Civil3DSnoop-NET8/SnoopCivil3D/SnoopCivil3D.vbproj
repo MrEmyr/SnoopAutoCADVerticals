@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <RootNamespace>SnoopCivil3DObjects</RootNamespace>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+        <Platforms>AnyCPU;x64</Platforms>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <UseWindowsForms>true</UseWindowsForms>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="AutoCAD.NET" Version="25.1.0" />
+      <PackageReference Include="Civil3D.NET" Version="13.8.280" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="AcDbMgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="accoremgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="AcMgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="AeccDbMgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="AecBaseMgd">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="AeccPressurePipesMgd">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="AecPropDataMgd">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="AcDbMgdBrep">
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(UsingMicrosoftNETSdk)' == 'true' or '$(CLRSupport)' == 'NetCore' ">
+        <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+    </ItemGroup>
+    <ItemDefinitionGroup Condition=" '$(CLRSupport)' == 'NetCore' ">
+        <ClCompile>
+            <DisableSpecificWarnings>4945;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+        </ClCompile>
+    </ItemDefinitionGroup>
+</Project>
