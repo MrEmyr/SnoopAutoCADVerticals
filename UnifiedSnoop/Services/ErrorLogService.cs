@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnifiedSnoop.Core.Helpers;
 
 #if NET8_0_OR_GREATER
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Core.Application;
@@ -78,7 +79,12 @@ namespace UnifiedSnoop.Services
             {
                 string bundlePath = @"C:\ProgramData\Autodesk\ApplicationPlugins\UnifiedSnoop.bundle";
                 Directory.CreateDirectory(bundlePath);
-                _logFilePath = Path.Combine(bundlePath, $"UnifiedSnoop_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+                
+                // Get version number for log filename
+                string version = VersionHelper.GetVersionNumber();
+                string versionSuffix = version != "Unknown" ? $"_v{version}" : "";
+                
+                _logFilePath = Path.Combine(bundlePath, $"UnifiedSnoop{versionSuffix}_{DateTime.Now:yyyyMMdd_HHmmss}.log");
             }
             catch
             {
@@ -192,6 +198,7 @@ namespace UnifiedSnoop.Services
                 {
                     var sb = new StringBuilder();
                     sb.AppendLine("UnifiedSnoop Error Log");
+                    sb.AppendLine($"Version: {VersionHelper.GetVersionNumber()}");
                     sb.AppendLine($"Export Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                     sb.AppendLine($"Total Entries: {_logEntries.Count}");
                     sb.AppendLine(new string('=', 80));

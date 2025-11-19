@@ -83,6 +83,37 @@ namespace UnifiedSnoop.Core.Helpers
         #region Public Methods
 
         /// <summary>
+        /// Gets the version number from version.json.
+        /// </summary>
+        /// <returns>The version number (e.g., "1.0.3") or "Unknown" if not found.</returns>
+        public static string GetVersionNumber()
+        {
+            try
+            {
+                var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                var assemblyDir = System.IO.Path.GetDirectoryName(assemblyLocation);
+                var bundleDir = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(assemblyDir));
+                var versionFile = System.IO.Path.Combine(bundleDir, "version.json");
+                
+                if (System.IO.File.Exists(versionFile))
+                {
+                    var jsonContent = System.IO.File.ReadAllText(versionFile);
+                    if (jsonContent.Contains("\"version\""))
+                    {
+                        var versionMatch = System.Text.RegularExpressions.Regex.Match(jsonContent, "\"version\"\\s*:\\s*\"([^\"]+)\"");
+                        if (versionMatch.Success) return versionMatch.Groups[1].Value;
+                    }
+                }
+            }
+            catch
+            {
+                // If version file reading fails, return Unknown
+            }
+            
+            return "Unknown";
+        }
+
+        /// <summary>
         /// Gets a formatted version string for display.
         /// </summary>
         /// <returns>A string containing build and version information.</returns>

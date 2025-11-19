@@ -1,11 +1,20 @@
 {
-  "version": "1.0.3",
-  "buildDate": "2025-11-19 14:58:25",
+  "version": "1.0.4",
+  "buildDate": "2025-11-19 14:59:49",
   "components": {
-    "UnifiedSnoop": "1.0.3",
+    "UnifiedSnoop": "1.0.4",
     "XRecordEditor": "1.0.0"
   },
   "changelog": [
+    {
+      "version": "1.0.4",
+      "date": "2025-11-19",
+      "changes": [
+        "ENHANCEMENT: Error logs now include version number in filename (e.g., UnifiedSnoop_v1.0.4_20251119_150100.log)",
+        "ENHANCEMENT: Exported logs now include version in header",
+        "Added GetVersionNumber() method to VersionHelper for reusable version retrieval"
+      ]
+    },
     {
       "version": "1.0.3",
       "date": "2025-11-19",
