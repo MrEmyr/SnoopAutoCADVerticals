@@ -310,11 +310,11 @@ namespace UnifiedSnoop.UI
             _searchPanel.Controls.Add(_btnCopyAll);
 
             // Create ListView (right panel of split container)
-            // Using Anchor instead of Dock to allow explicit positioning
+            // Using Anchor instead of Dock to allow explicit positioning with MORE space for headers
             _listView = new ListView
             {
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                Location = new Point(5, 5),  // Start 5px from top to show headers
+                Location = new Point(5, 30),  // Start 30px from top to DEFINITELY show headers!
                 View = View.Details,
                 FullRowSelect = true,
                 GridLines = true,
@@ -322,7 +322,7 @@ namespace UnifiedSnoop.UI
                 MultiSelect = false,
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
-                HeaderStyle = ColumnHeaderStyle.Nonclickable,
+                HeaderStyle = ColumnHeaderStyle.Clickable,  // Make headers clickable again
                 Scrollable = true
             };
 
@@ -334,6 +334,16 @@ namespace UnifiedSnoop.UI
             _listView.SelectedIndexChanged += ListView_SelectedIndexChanged;
             _listView.DoubleClick += ListView_DoubleClick;
             _listView.MouseMove += ListView_MouseMove;
+
+            // Add a visual separator label to show where headers should appear
+            Label headerSeparator = new Label
+            {
+                Text = "",  // Empty but provides visual space
+                Height = 25,
+                Dock = DockStyle.Top,
+                BackColor = SystemColors.ControlLight,
+                BorderStyle = BorderStyle.FixedSingle
+            };
 
             // Create container panel for ListView
             Panel listViewContainer = new Panel
@@ -347,7 +357,7 @@ namespace UnifiedSnoop.UI
             listViewContainer.SizeChanged += (s, e) => {
                 _listView.Size = new Size(
                     listViewContainer.ClientSize.Width - 10,  // Leave 5px margin on each side
-                    listViewContainer.ClientSize.Height - 10  // Leave 5px margin top and bottom
+                    listViewContainer.ClientSize.Height - 35  // Leave 30px at top + 5px at bottom
                 );
             };
             
@@ -356,6 +366,7 @@ namespace UnifiedSnoop.UI
             // Add controls to split container in correct order
             _splitContainer.Panel1.Controls.Add(_treeView);
             _splitContainer.Panel2.Controls.Add(_searchPanel);      // Add search panel first (docks to top)
+            _splitContainer.Panel2.Controls.Add(headerSeparator);   // Add separator for visual space
             _splitContainer.Panel2.Controls.Add(listViewContainer); // Add container last (fills remaining space)
 
             // Create bottom status panel
