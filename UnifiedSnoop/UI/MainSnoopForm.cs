@@ -172,7 +172,7 @@ namespace UnifiedSnoop.UI
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleLeft,
                 ForeColor = Color.Blue,
-                Font = new Font(this.Font, FontStyle.Bold)
+                Font = new System.Drawing.Font(this.Font, FontStyle.Bold)
             };
 
             _topPanel.Controls.Add(_lblPropertyCount);
