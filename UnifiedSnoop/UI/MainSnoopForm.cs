@@ -241,14 +241,17 @@ namespace UnifiedSnoop.UI
             _toolbarPanel.Controls.Add(_btnViewBookmarks);
 
             // Create split container
-            // Note: Panel min sizes and splitter distance are set in OnLoad to avoid initialization errors
+            // Set initial distance here before adding to form
             _splitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
                 BorderStyle = BorderStyle.Fixed3D,
                 IsSplitterFixed = false,
-                SplitterWidth = 4  // Per UI spec line 80
+                SplitterWidth = 4,  // Per UI spec line 80
+                Panel1MinSize = 200,  // Set min sizes immediately
+                Panel2MinSize = 400,
+                SplitterDistance = 400  // Set initial distance (will be adjusted in OnLoad if needed)
             };
 
             // Create TreeView (left panel of split container)
@@ -325,11 +328,9 @@ namespace UnifiedSnoop.UI
             _searchPanel.Controls.Add(_btnCopyAll);
 
             // Create ListView (right panel of split container)
-            // Using Anchor instead of Dock to allow explicit positioning with MORE space for headers
+            // CRITICAL FIX: Use specific positioning to ensure headers are always visible
             _listView = new ListView
             {
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                Location = new Point(5, 30),  // Start 30px from top to DEFINITELY show headers!
                 View = View.Details,
                 FullRowSelect = true,
                 GridLines = true,
@@ -337,8 +338,12 @@ namespace UnifiedSnoop.UI
                 MultiSelect = false,
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
-                HeaderStyle = ColumnHeaderStyle.Clickable,  // Make headers clickable again
-                Scrollable = true
+                HeaderStyle = ColumnHeaderStyle.Clickable,
+                Scrollable = true,
+                // Use Anchor for proper resizing, not Dock
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                Location = new Point(10, 50),  // Start well below search panel (40px) + spacing
+                Size = new Size(100, 100)  // Will be resized in Panel2.Resize event
             };
 
             // Add columns to ListView with proper sizing
@@ -350,39 +355,29 @@ namespace UnifiedSnoop.UI
             _listView.DoubleClick += ListView_DoubleClick;
             _listView.MouseMove += ListView_MouseMove;
 
-            // Add a visual separator label to show where headers should appear
-            Label headerSeparator = new Label
-            {
-                Text = "",  // Empty but provides visual space
-                Height = 25,
-                Dock = DockStyle.Top,
-                BackColor = SystemColors.ControlLight,
-                BorderStyle = BorderStyle.FixedSingle
-            };
-
-            // Create container panel for ListView
-            Panel listViewContainer = new Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = SystemColors.Control,
-                AutoScroll = false
-            };
-            
-            // Size ListView properly when container resizes
-            listViewContainer.SizeChanged += (s, e) => {
-                _listView.Size = new Size(
-                    listViewContainer.ClientSize.Width - 10,  // Leave 5px margin on each side
-                    listViewContainer.ClientSize.Height - 35  // Leave 30px at top + 5px at bottom
-                );
-            };
-            
-            listViewContainer.Controls.Add(_listView);
-
             // Add controls to split container in correct order
+            // CRITICAL FIX: Add directly to Panel2 without intermediate container to avoid header hiding
             _splitContainer.Panel1.Controls.Add(_treeView);
-            _splitContainer.Panel2.Controls.Add(_searchPanel);      // Add search panel first (docks to top)
-            _splitContainer.Panel2.Controls.Add(headerSeparator);   // Add separator for visual space
-            _splitContainer.Panel2.Controls.Add(listViewContainer); // Add container last (fills remaining space)
+            _splitContainer.Panel2.Controls.Add(_searchPanel);  // Docks to top (40px height)
+            _splitContainer.Panel2.Controls.Add(_listView);     // Anchored, positioned below search
+            
+            // Handle Panel2 resize to properly size ListView and ensure headers stay visible
+            _splitContainer.Panel2.Resize += (sender, e) =>
+            {
+                if (_listView != null && _splitContainer.Panel2 != null)
+                {
+                    int availableWidth = _splitContainer.Panel2.ClientSize.Width;
+                    int availableHeight = _splitContainer.Panel2.ClientSize.Height;
+                    int searchPanelHeight = _searchPanel.Height;
+                    
+                    // Position ListView below search panel with margins
+                    _listView.Location = new Point(10, searchPanelHeight + 10);
+                    _listView.Size = new Size(
+                        availableWidth - 20,  // 10px margin on each side
+                        availableHeight - searchPanelHeight - 20  // 10px top + 10px bottom margin
+                    );
+                }
+            };
 
             // Create bottom status panel (per spec: 25px height)
             _bottomPanel = new Panel
@@ -435,31 +430,49 @@ namespace UnifiedSnoop.UI
             
             try
             {
-                // Now that form is sized, set the panel min sizes
-                _splitContainer.Panel1MinSize = 200;
-                _splitContainer.Panel2MinSize = 400;
+                // Calculate available width for split container
+                int availableWidth = this.ClientSize.Width;
                 
                 // Set SplitterDistance per spec: 400px for left panel (TreeView)
-                int desiredDistance = 400; // Per UI spec line 81
-                int minDistance = 200; // Panel1MinSize
-                int maxDistance = this.ClientSize.Width - 400 - _splitContainer.SplitterWidth; // Width - Panel2MinSize - SplitterWidth
+                int desiredDistance = 400; // Per UI spec
+                int minDistance = _splitContainer.Panel1MinSize; // 200
+                int maxDistance = availableWidth - _splitContainer.Panel2MinSize - _splitContainer.SplitterWidth;
                 
-                // Ensure we have enough space
-                if (maxDistance > minDistance)
+                // Only adjust if we have enough space, otherwise keep the initial 400px
+                if (availableWidth >= 800) // Minimum sensible width (200 + 400 + margins)
                 {
-                    // Clamp to valid range
-                    _splitContainer.SplitterDistance = Math.Max(minDistance, Math.Min(desiredDistance, maxDistance));
+                    if (maxDistance > minDistance && desiredDistance > minDistance && desiredDistance < maxDistance)
+                    {
+                        _splitContainer.SplitterDistance = desiredDistance;
+                    }
+                    else if (maxDistance > minDistance)
+                    {
+                        // Use a proportion: 1/3 for tree, 2/3 for properties
+                        _splitContainer.SplitterDistance = availableWidth / 3;
+                    }
                 }
-                else
+                // If form is too small, keep the initial 400px and let user adjust
+                
+                // CRITICAL: Trigger initial ListView sizing to ensure headers are visible
+                if (_listView != null && _splitContainer.Panel2 != null)
                 {
-                    // Form is too small, just use half
-                    _splitContainer.SplitterDistance = this.ClientSize.Width / 2;
+                    int panelWidth = _splitContainer.Panel2.ClientSize.Width;
+                    int panelHeight = _splitContainer.Panel2.ClientSize.Height;
+                    int searchPanelHeight = _searchPanel.Height;
+                    
+                    _listView.Location = new Point(10, searchPanelHeight + 10);
+                    _listView.Size = new Size(
+                        panelWidth - 20,
+                        panelHeight - searchPanelHeight - 20
+                    );
                 }
+                
+                UpdateStatus($"Form loaded: {availableWidth}px wide, splitter at {_splitContainer.SplitterDistance}px");
             }
             catch (System.Exception ex)
             {
                 Services.ErrorLogService.Instance.LogError("Error setting splitter distance", ex, "MainSnoopForm.OnLoad");
-                // Don't try to set a fallback - let it use whatever default it has
+                UpdateStatus($"Warning: Splitter setup error - using defaults");
             }
         }
 
@@ -516,18 +529,44 @@ namespace UnifiedSnoop.UI
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: Starting...");
+                
+                if (_treeView == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: ERROR - _treeView is null!");
+                    UpdateStatus("Error: TreeView not initialized");
+                    return;
+                }
+
+                if (_database == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: ERROR - _database is null!");
+                    UpdateStatus("Error: Database not initialized");
+                    return;
+                }
+
+                if (_transactionHelper == null || _transactionHelper.Transaction == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: ERROR - Transaction not available!");
+                    UpdateStatus("Error: Transaction not available");
+                    return;
+                }
+
                 _treeView.BeginUpdate();
                 _treeView.Nodes.Clear();
+                System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: TreeView cleared");
 
                 // Create root node for database
                 TreeNode rootNode = new TreeNode("Database")
                 {
                     Tag = _database
                 };
+                System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: Root node created");
 
                 // Add AutoCAD collections
                 TreeNode acadNode = new TreeNode("AutoCAD Collections");
                 var acadCollections = _databaseService.GetDatabaseCollections(_transactionHelper.Transaction);
+                System.Diagnostics.Debug.WriteLine($"LoadDatabaseTree: Got {acadCollections.Count} AutoCAD collections");
                 
                 foreach (var objNode in acadCollections)
                 {
@@ -536,12 +575,14 @@ namespace UnifiedSnoop.UI
                 }
 
                 rootNode.Nodes.Add(acadNode);
+                System.Diagnostics.Debug.WriteLine($"LoadDatabaseTree: Added AutoCAD node with {acadNode.Nodes.Count} children");
 
                 // Add Civil 3D collections if available
                 if (VersionHelper.IsCivil3DAvailable())
                 {
                     TreeNode civilNode = new TreeNode("Civil 3D Collections");
                     var civilCollections = _databaseService.GetCivil3DCollections(_transactionHelper.Transaction);
+                    System.Diagnostics.Debug.WriteLine($"LoadDatabaseTree: Got {civilCollections.Count} Civil 3D collections");
                     
                     foreach (var objNode in civilCollections)
                     {
@@ -561,23 +602,32 @@ namespace UnifiedSnoop.UI
                         civilNode.Nodes.Add(new TreeNode("No Civil 3D collections found in this drawing"));
                         rootNode.Nodes.Add(civilNode);
                     }
+                    System.Diagnostics.Debug.WriteLine($"LoadDatabaseTree: Added Civil 3D node with {civilNode.Nodes.Count} children");
                 }
 
                 // Add root node and expand it
                 _treeView.Nodes.Add(rootNode);
                 rootNode.Expand();
+                System.Diagnostics.Debug.WriteLine($"LoadDatabaseTree: Root node added with {rootNode.Nodes.Count} children. Tree now has {_treeView.Nodes.Count} root nodes");
 
-                UpdateStatus($"Loaded database tree. Civil 3D: {VersionHelper.IsCivil3DAvailable()}");
+                UpdateStatus($"Loaded database tree with {acadCollections.Count} AutoCAD collections. Civil 3D: {VersionHelper.IsCivil3DAvailable()}");
+                System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: Complete!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading database tree: {ex.Message}", "Error", 
+                System.Diagnostics.Debug.WriteLine($"LoadDatabaseTree: EXCEPTION - {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadDatabaseTree: Stack trace - {ex.StackTrace}");
+                
+                MessageBox.Show($"Error loading database tree: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}", "Error", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 UpdateStatus($"Error: {ex.Message}");
+                
+                Services.ErrorLogService.Instance.LogError("Error loading database tree", ex, "LoadDatabaseTree");
             }
             finally
             {
                 _treeView.EndUpdate();
+                System.Diagnostics.Debug.WriteLine("LoadDatabaseTree: EndUpdate called");
             }
         }
 

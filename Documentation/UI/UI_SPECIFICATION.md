@@ -699,37 +699,52 @@ if (civilDocument == null) {
 
 ### WinForms Layout Challenges
 
-**ListView Header Visibility Issue**:
+**ListView Header Visibility Issue** ⚠️ **RESOLVED (2025-11-19)**:
 
-The ListView headers were initially obscured due to WinForms layout quirks with nested docking.
+The ListView headers were completely hidden due to WinForms nested docking issues. Users saw the first data row appearing as column headers instead of "Property | Type | Value".
 
-**Solution**:
-1. Use explicit positioning (`Location = new Point(5, 30)`)
-2. Use anchoring instead of docking for ListView
-3. Add visual separator with fixed height (25px)
-4. Dynamic sizing via container `SizeChanged` event
-5. Start ListView 30px from container top
+**Root Cause**:
+- Original implementation used nested `Dock = Fill` containers
+- ListView with `Dock = Fill` inside a `Panel` with `Dock = Fill`
+- WinForms positioned ListView headers outside the visible client area
 
-**Code Pattern**:
+**Solution Implemented**:
+1. ✅ **Removed** intermediate container panel
+2. ✅ **Changed** ListView from `Dock = Fill` to `Anchor = All Sides`
+3. ✅ **Added** explicit `Location = new Point(10, 50)` positioning
+4. ✅ **Added** `Panel2.Resize` event handler for dynamic sizing
+5. ✅ **Added** initial sizing in `OnLoad()` method
+
+**Current Code Pattern** (Working):
 ```csharp
-// Container with Fill dock
-Panel container = new Panel { Dock = DockStyle.Fill };
-
-// ListView with anchoring and explicit position
-ListView list = new ListView {
+// ListView with explicit position and anchoring (no container!)
+_listView = new ListView {
     Anchor = AnchorStyles.Top | Bottom | Left | Right,
-    Location = new Point(5, 30),  // Space for headers
+    Location = new Point(10, 50),  // Below search panel + spacing
+    Size = new Size(100, 100),     // Resized dynamically
+    BorderStyle = BorderStyle.FixedSingle,
     // ...
 };
 
-// Dynamic sizing
-container.SizeChanged += (s, e) => {
-    list.Size = new Size(
-        container.ClientSize.Width - 10,
-        container.ClientSize.Height - 35
+// Add directly to Panel2 (no intermediate container)
+_splitContainer.Panel2.Controls.Add(_searchPanel);  // Docks to top
+_splitContainer.Panel2.Controls.Add(_listView);     // Anchored below
+
+// Dynamic resize handler
+_splitContainer.Panel2.Resize += (sender, e) => {
+    int availableWidth = _splitContainer.Panel2.ClientSize.Width;
+    int availableHeight = _splitContainer.Panel2.ClientSize.Height;
+    int searchPanelHeight = _searchPanel.Height;
+    
+    _listView.Location = new Point(10, searchPanelHeight + 10);
+    _listView.Size = new Size(
+        availableWidth - 20,
+        availableHeight - searchPanelHeight - 20
     );
 };
 ```
+
+**See Also**: `Documentation/UI/UI_REFACTOR_2025-11-19.md` for detailed refactor notes.
 
 ### Reflection Performance
 
