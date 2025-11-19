@@ -403,11 +403,12 @@ namespace UnifiedSnoop.UI
             _bottomPanel.Controls.Add(_lblStatus);
 
             // Add controls to form (order matters for docking!)
-            // Add in reverse order: bottom first, then top, then fill
-            this.Controls.Add(_splitContainer);    // Fills remaining space
-            this.Controls.Add(_toolbarPanel);      // Docks to top (below _topPanel)
-            this.Controls.Add(_topPanel);          // Docks to top
-            this.Controls.Add(_bottomPanel);       // Docks to bottom
+            // CRITICAL: Add in specific order for proper docking behavior
+            // Bottom docks first, then top elements, then fill
+            this.Controls.Add(_bottomPanel);       // Dock to bottom first
+            this.Controls.Add(_topPanel);          // Dock to top (occupies top position)
+            this.Controls.Add(_toolbarPanel);      // Dock to top (below _topPanel)
+            this.Controls.Add(_splitContainer);    // Fill remaining space last
 
             // Setup tooltips
             SetupTooltips();

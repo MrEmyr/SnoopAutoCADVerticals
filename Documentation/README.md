@@ -1,174 +1,185 @@
-# Documentation
+# UnifiedSnoop Documentation
 
-This folder contains all project documentation including API reviews, architecture plans, and implementation guides.
-
----
-
-## 📋 **Contents**
-
-### **API Review Reports**
-
-#### **1. API_REVIEW_REPORT.md**
-- **Project:** Civil3DSnoop-NET8
-- **Description:** Comprehensive review of the Civil3DSnoop VB.NET project against Civil 3D 2024 API documentation
-- **Status:** ✅ 4 critical issues identified and fixed
-- **Key Findings:**
-  - OpenMode.ForWrite incorrectly used in 4 locations (all fixed)
-  - All Civil 3D API methods verified as compliant
-  - Project now 100% API compliant
-
-#### **2. API_REVIEW_REPORT_MgdDbg.md**
-- **Project:** MgdDbg-master
-- **Description:** Comprehensive review of the MgdDbg C# project against AutoCAD .NET 2024 API documentation
-- **Status:** ✅ Zero issues found - exemplary code
-- **Key Findings:**
-  - 100% correct OpenMode usage (100+ instances checked)
-  - Excellent transaction management patterns
-  - Modern .NET 8 compliance
-  - A+ code quality (98/100)
-
-#### **3. COMBINED_API_REVIEW_SUMMARY.md**
-- **Projects:** Both Civil3DSnoop and MgdDbg
-- **Description:** Side-by-side comparison and combined review summary
-- **Contents:**
-  - Executive dashboard with metrics
-  - Comparative analysis
-  - Best practices and lessons learned
-  - Recommendations for both projects
+**Comprehensive documentation for the UnifiedSnoop AutoCAD/Civil 3D inspection tool**
 
 ---
 
-### **UnifiedSnoop Project Documentation**
+## 📚 Documentation Structure
 
-#### **4. UnifiedSnoop_Architecture.drawio**
-- **Type:** Draw.io diagram (open with draw.io or diagrams.net)
-- **Description:** Complete solution architecture for the unified AutoCAD/Civil 3D snoop tool
-- **Contents:**
-  - 6-layer architecture diagram
-  - Component relationships
-  - Data flow visualization
-  - Technology stack
-  - Legend and feature list
+All project documentation is organized into the following categories:
 
-**How to view:**
-1. Open [diagrams.net](https://app.diagrams.net/)
-2. File → Open → Select this file
-3. Or use VS Code with Draw.io Integration extension
+### 📂 [UI Documentation](./UI/)
+User interface specifications, layouts, and design documentation
 
-#### **5. UnifiedSnoop_Implementation_Plan.md**
-- **Type:** Implementation guide and detailed plan
-- **Description:** Complete 8-week implementation plan for creating the unified tool
-- **Contents:**
-  - Detailed architecture specifications
-  - Layer-by-layer component design
-  - Code examples and interfaces
-  - 8-week phase-by-phase implementation plan
-  - Project structure and organization
-  - Technology stack and dependencies
-  - Success criteria and deployment guide
+- **[UI_SPECIFICATION.md](./UI/UI_SPECIFICATION.md)** - Complete UI specification (component hierarchy, layout, interactions)
+- **[UI_Layout.drawio](./UI/UI_Layout.drawio)** - Visual diagram of UI layout and component structure
+- **[UI_REVIEW_AND_FIXES.md](./UI/UI_REVIEW_AND_FIXES.md)** - UI review findings and fixes applied
 
----
+### 👥 [User Documentation](./User/)
+End-user guides and feature documentation
 
-## 🎯 **Quick Reference**
+- **[USER_GUIDE.md](./User/USER_GUIDE.md)** - Complete user guide for UnifiedSnoop
+- **[XRECORD_EDITOR.md](./User/XRECORD_EDITOR.md)** - XRecord Editor feature documentation
+- **[XRECORD_SUPPORT.md](./User/XRECORD_SUPPORT.md)** - XRecord support implementation details
 
-### **For Code Review:**
-- Start with: `COMBINED_API_REVIEW_SUMMARY.md`
-- Details on Civil3DSnoop: `API_REVIEW_REPORT.md`
-- Details on MgdDbg: `API_REVIEW_REPORT_MgdDbg.md`
+### 🔧 [Technical Documentation](./Technical/)
+Architecture, implementation, and technical specifications
 
-### **For New Development (UnifiedSnoop):**
-1. **Architecture:** `UnifiedSnoop_Architecture.drawio` (visual overview)
-2. **Implementation:** `UnifiedSnoop_Implementation_Plan.md` (detailed plan)
-3. **Reference:** Review reports for best practices and patterns to follow/avoid
+- **[UnifiedSnoop_Architecture.drawio](./Technical/UnifiedSnoop_Architecture.drawio)** - Solution architecture diagram
+- **[IMPLEMENTATION_REPORT.md](./Technical/IMPLEMENTATION_REPORT.md)** - Implementation details and status
+- **[VERSION_COMPATIBILITY.md](./Technical/VERSION_COMPATIBILITY.md)** - Multi-version compatibility guide
+- **[ERROR_LOGGING.md](./Technical/ERROR_LOGGING.md)** - Error logging system documentation
+- **[PLANT3D_SUPPORT.md](./Technical/PLANT3D_SUPPORT.md)** - Plant 3D support documentation
+- **[PLANT3D_IMPLEMENTATION_SUMMARY.md](./Technical/PLANT3D_IMPLEMENTATION_SUMMARY.md)** - Plant 3D implementation summary
 
----
+### 🚀 [Deployment Documentation](./Deployment/)
+Build, deployment, and distribution guides
 
-## 📊 **Document Summary**
+- **[DEPLOYMENT_GUIDE.md](./Deployment/DEPLOYMENT_GUIDE.md)** - Complete deployment guide
+- **[DEPLOYMENT_README.md](./Deployment/DEPLOYMENT_README.md)** - Quick deployment instructions
+- **[DEPLOYMENT_RULES.md](./Deployment/DEPLOYMENT_RULES.md)** - Deployment rules and best practices
 
-| Document | Type | Pages | Status | Last Updated |
-|----------|------|-------|--------|--------------|
-| API_REVIEW_REPORT.md | Review | ~180 lines | ✅ Complete | Nov 14, 2025 |
-| API_REVIEW_REPORT_MgdDbg.md | Review | ~370 lines | ✅ Complete | Nov 14, 2025 |
-| COMBINED_API_REVIEW_SUMMARY.md | Summary | ~500 lines | ✅ Complete | Nov 14, 2025 |
-| UnifiedSnoop_Architecture.drawio | Diagram | 1 page | ✅ Complete | Nov 14, 2025 |
-| UnifiedSnoop_Implementation_Plan.md | Plan | ~800 lines | ✅ Complete | Nov 14, 2025 |
+### 💻 [Development Documentation](./Development/)
+Developer guides, milestones, and development processes
+
+- **[DEVELOPMENT_RULES.md](./Development/DEVELOPMENT_RULES.md)** - Development guidelines and rules
+- **[DEVELOPMENT_CHECKLIST.md](./Development/DEVELOPMENT_CHECKLIST.md)** - Development checklist
+- **[PHASE1_COMPLETE.md](./Development/PHASE1_COMPLETE.md)** - Phase 1 completion report
+- **[PHASE2_DEVELOPMENT_COMPLETE.md](./Development/PHASE2_DEVELOPMENT_COMPLETE.md)** - Phase 2 completion report
+- **[PHASE2_ENHANCEMENTS_PLAN.md](./Development/PHASE2_ENHANCEMENTS_PLAN.md)** - Phase 2 enhancements plan
+- **[SPRINT1_COMPLETE.md](./Development/SPRINT1_COMPLETE.md)** - Sprint 1 completion report
+- **[MULTI_VERSION_SETUP_COMPLETE.md](./Development/MULTI_VERSION_SETUP_COMPLETE.md)** - Multi-version setup report
+- **[MULTI_TARGET_BUILD_COMPLETE.md](./Development/MULTI_TARGET_BUILD_COMPLETE.md)** - Multi-target build report
+- **[TODAY_ACCOMPLISHMENTS.md](./Development/TODAY_ACCOMPLISHMENTS.md)** - Daily accomplishments log
 
 ---
 
-## 🔍 **Key Findings Summary**
+## 📋 Project-Level Documentation
 
-### **Civil3DSnoop Project**
-- **Issues Found:** 4 (all OpenMode-related)
-- **Issues Fixed:** 4 (100%)
-- **API Compliance:** 100%
-- **Code Quality:** A (90/100)
+### Core Documents
 
-### **MgdDbg Project**
-- **Issues Found:** 0
-- **API Compliance:** 100%
-- **Code Quality:** A+ (98/100)
-- **Status:** Can serve as reference implementation
+- **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Complete project structure and organization
+- **[UnifiedSnoop_Implementation_Plan.md](./UnifiedSnoop_Implementation_Plan.md)** - Implementation plan and roadmap
+- **[SETUP_COMPLETE.md](./SETUP_COMPLETE.md)** - Initial setup completion report
 
-### **UnifiedSnoop Project (Planned)**
-- **Approach:** New C# project
-- **UI Foundation:** Civil3DSnoop style (TreeView + ListView)
-- **Functionality:** Extended for both AutoCAD and Civil 3D
-- **Timeline:** 8 weeks (full-time) or 3-4 months (part-time)
-- **Architecture:** 6-layer modular design
+### API Reviews
+
+- **[COMBINED_API_REVIEW_SUMMARY.md](./COMBINED_API_REVIEW_SUMMARY.md)** - Combined API review summary
+- **[API_REVIEW_REPORT.md](./API_REVIEW_REPORT.md)** - Civil3DSnoop API review
+- **[API_REVIEW_REPORT_MgdDbg.md](./API_REVIEW_REPORT_MgdDbg.md)** - MgdDbg API review
 
 ---
 
-## 📚 **API References**
+## 🎯 Quick Start Links
 
-- [AutoCAD .NET API 2024](https://help.autodesk.com/view/OARX/2024/ENU/?guid=GUID-C3F3C736-40CF-44A0-9210-55F6A939B6F2)
-- [Civil 3D API 2024](https://help.autodesk.com/view/CIV3D/2024/ENU/)
-- [.NET 8.0 Documentation](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8)
+### For Users
+- [Installation Guide](./Deployment/DEPLOYMENT_GUIDE.md)
+- [User Guide](./User/USER_GUIDE.md)
+- [Feature: XRecord Editor](./User/XRECORD_EDITOR.md)
 
----
+### For Developers
+- [Development Rules](./Development/DEVELOPMENT_RULES.md)
+- [Architecture Overview](./Technical/UnifiedSnoop_Architecture.drawio)
+- [Version Compatibility](./Technical/VERSION_COMPATIBILITY.md)
 
-## 🏆 **Best Practices Identified**
+### For Deployers
+- [Deployment Guide](./Deployment/DEPLOYMENT_GUIDE.md)
+- [Deployment Rules](./Deployment/DEPLOYMENT_RULES.md)
 
-From the code reviews, these best practices were identified:
-
-### **✅ DO:**
-- Use `OpenMode.ForRead` for inspection/read-only operations
-- Implement custom TransactionHelper for complex scenarios
-- Follow IDisposable pattern for resource management
-- Use modern .NET patterns (CancellationToken, not Thread.Abort)
-- Structure code with clear separation of concerns
-- Handle AutoCAD-specific exceptions properly
-
-### **❌ DON'T:**
-- Use `OpenMode.ForWrite` unless actually modifying objects
-- Leave transactions uncommitted
-- Forget to dispose of database objects
-- Use deprecated APIs (Thread.Abort, ObjectId.Open/Close)
-- Mix UI and business logic
-- Ignore error handling
+### For UI/UX
+- [UI Specification](./UI/UI_SPECIFICATION.md)
+- [UI Layout Diagram](./UI/UI_Layout.drawio)
 
 ---
 
-## 📝 **Notes**
+## 🔍 Finding Documentation
 
-- All documentation is in Markdown format for easy viewing in GitHub, VS Code, or any text editor
-- The Draw.io diagram can be imported into Visio if needed
-- Code examples in the implementation plan are in C#
-- All paths and references are relative to the repository root
+### By Topic
+
+| Topic | Document |
+|-------|----------|
+| **Installation** | [Deployment Guide](./Deployment/DEPLOYMENT_GUIDE.md) |
+| **Usage** | [User Guide](./User/USER_GUIDE.md) |
+| **UI Design** | [UI Specification](./UI/UI_SPECIFICATION.md) |
+| **Architecture** | [Architecture Diagram](./Technical/UnifiedSnoop_Architecture.drawio) |
+| **Development** | [Development Rules](./Development/DEVELOPMENT_RULES.md) |
+| **AutoCAD Versions** | [Version Compatibility](./Technical/VERSION_COMPATIBILITY.md) |
+| **Error Handling** | [Error Logging](./Technical/ERROR_LOGGING.md) |
+| **XRecord Features** | [XRecord Support](./User/XRECORD_SUPPORT.md) |
+| **Plant 3D** | [Plant 3D Support](./Technical/PLANT3D_SUPPORT.md) |
+
+### By Role
+
+| Role | Recommended Reading |
+|------|-------------------|
+| **End User** | [User Guide](./User/USER_GUIDE.md), [XRecord Editor](./User/XRECORD_EDITOR.md) |
+| **Developer** | [Development Rules](./Development/DEVELOPMENT_RULES.md), [Architecture](./Technical/UnifiedSnoop_Architecture.drawio), [Implementation Report](./Technical/IMPLEMENTATION_REPORT.md) |
+| **DevOps/Admin** | [Deployment Guide](./Deployment/DEPLOYMENT_GUIDE.md), [Deployment Rules](./Deployment/DEPLOYMENT_RULES.md) |
+| **UI Designer** | [UI Specification](./UI/UI_SPECIFICATION.md), [UI Layout](./UI/UI_Layout.drawio) |
+| **Technical Writer** | All documents in this folder |
 
 ---
 
-## 🔄 **Version History**
+## 📖 Documentation Standards
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | Nov 14, 2025 | Initial documentation created |
-| | | - API reviews for both projects |
-| | | - Combined summary report |
-| | | - UnifiedSnoop architecture & plan |
+### File Naming
+- Use `SCREAMING_SNAKE_CASE` for major documents (e.g., `USER_GUIDE.md`)
+- Use descriptive names that indicate content
+- Use `.md` extension for Markdown files
+- Use `.drawio` extension for diagrams
+
+### Organization
+- Keep related documents in the same category folder
+- Update this README when adding new documents
+- Cross-reference related documents with relative links
+- Maintain a clear hierarchy
+
+### Maintenance
+- Keep documents up-to-date with code changes
+- Archive outdated documents in `Archive/` subfolder
+- Update version information in document headers
+- Review quarterly for accuracy
 
 ---
 
-**Last Updated:** November 14, 2025  
-**Maintained By:** Development Team  
-**Status:** Current and Complete
+## 🔄 Document Status
 
+### Current Version: 1.0.0
+**Last Major Update:** 2025-11-19
+
+| Category | Status | Last Updated |
+|----------|--------|--------------|
+| UI Documentation | ✅ Current | 2025-11-19 |
+| User Documentation | ✅ Current | 2025-11-14 |
+| Technical Documentation | ✅ Current | 2025-11-15 |
+| Deployment Documentation | ✅ Current | 2025-11-18 |
+| Development Documentation | ✅ Current | 2025-11-19 |
+
+---
+
+## 📝 Contributing to Documentation
+
+When adding or updating documentation:
+
+1. **Choose the correct category** based on the audience and purpose
+2. **Follow the naming conventions** above
+3. **Update this README** with links to new documents
+4. **Cross-reference** related documents
+5. **Include examples** and code samples where helpful
+6. **Keep language clear** and concise
+7. **Test all links** before committing
+
+---
+
+## 🆘 Need Help?
+
+- For usage questions: See [User Guide](./User/USER_GUIDE.md)
+- For development questions: See [Development Rules](./Development/DEVELOPMENT_RULES.md)
+- For deployment issues: See [Deployment Guide](./Deployment/DEPLOYMENT_GUIDE.md)
+- For UI/UX questions: See [UI Specification](./UI/UI_SPECIFICATION.md)
+
+---
+
+**UnifiedSnoop** - Unified inspection tool for AutoCAD and Civil 3D  
+**License:** MIT  
+**Repository:** https://github.com/MrEmyr/SnoopAutoCADVerticals

@@ -358,6 +358,43 @@ Format: `UnifiedSnoop_YYYYMMDD.log`
 
 ---
 
+## 📚 Documentation
+
+**All project documentation has been consolidated in the `Documentation/` folder**
+
+### Quick Links
+
+#### For Users
+- **[User Guide](../Documentation/User/USER_GUIDE.md)** - Complete usage guide
+- **[XRecord Editor](../Documentation/User/XRECORD_EDITOR.md)** - XRecord editing feature
+- **[Deployment Guide](../Documentation/Deployment/DEPLOYMENT_GUIDE.md)** - Installation and setup
+
+#### For Developers
+- **[Development Rules](../Documentation/Development/DEVELOPMENT_RULES.md)** - Coding standards and guidelines
+- **[Architecture Diagram](../Documentation/Technical/UnifiedSnoop_Architecture.drawio)** - System architecture
+- **[Implementation Report](../Documentation/Technical/IMPLEMENTATION_REPORT.md)** - Technical details
+- **[Version Compatibility](../Documentation/Technical/VERSION_COMPATIBILITY.md)** - Multi-version support
+
+#### For UI/UX
+- **[UI Specification](../Documentation/UI/UI_SPECIFICATION.md)** - Complete UI specification
+- **[UI Layout Diagram](../Documentation/UI/UI_Layout.drawio)** - Visual layout reference
+
+### Documentation Structure
+
+```
+Documentation/
+├── UI/                    - User interface docs
+├── User/                  - End-user guides  
+├── Technical/             - Technical specs and architecture
+├── Deployment/            - Build and deployment guides
+├── Development/           - Developer guides and milestones
+└── README.md             - Documentation index (start here!)
+```
+
+**📖 [View Complete Documentation Index](../Documentation/README.md)**
+
+---
+
 ## 📝 Version History
 
 ### Version 1.0.0 (Current)
