@@ -373,10 +373,12 @@ namespace UnifiedSnoop.UI
                     
                     // Position ListView below search panel with margins
                     _listView.Location = new Point(10, searchPanelHeight + 10);
-                    _listView.Size = new Size(
-                        availableWidth - 20,  // 10px margin on each side
-                        availableHeight - searchPanelHeight - 20  // 10px top + 10px bottom margin
-                    );
+                    
+                    // Calculate dimensions ensuring non-negative values to prevent rendering issues
+                    int listViewWidth = Math.Max(0, availableWidth - 20);  // 10px margin on each side
+                    int listViewHeight = Math.Max(0, availableHeight - searchPanelHeight - 20);  // 10px top + 10px bottom margin
+                    
+                    _listView.Size = new Size(listViewWidth, listViewHeight);
                 }
             };
 
@@ -462,10 +464,12 @@ namespace UnifiedSnoop.UI
                     int searchPanelHeight = _searchPanel.Height;
                     
                     _listView.Location = new Point(10, searchPanelHeight + 10);
-                    _listView.Size = new Size(
-                        panelWidth - 20,
-                        panelHeight - searchPanelHeight - 20
-                    );
+                    
+                    // Calculate dimensions ensuring non-negative values to prevent rendering issues
+                    int listViewWidth = Math.Max(0, panelWidth - 20);
+                    int listViewHeight = Math.Max(0, panelHeight - searchPanelHeight - 20);
+                    
+                    _listView.Size = new Size(listViewWidth, listViewHeight);
                 }
                 
                 UpdateStatus($"Form loaded: {availableWidth}px wide, splitter at {_splitContainer.SplitterDistance}px");

@@ -1,11 +1,21 @@
 {
-  "version": "1.0.6",
-  "buildDate": "2025-11-19 16:56:12",
+  "version": "1.0.7",
+  "buildDate": "2025-11-19 17:13:21",
   "components": {
-    "UnifiedSnoop": "1.0.6",
+    "UnifiedSnoop": "1.0.7",
     "XRecordEditor": "1.0.0"
   },
   "changelog": [
+    {
+      "version": "1.0.7",
+      "date": "2025-11-19",
+      "changes": [
+        "BUG FIX: Added negative dimension protection in ListView resize calculations",
+        "BUG FIX: Prevents crashes when form resized to very small dimensions",
+        "IMPROVEMENT: Enhanced UI robustness for edge cases (minimum window size)",
+        "Uses Math.Max(0, value) to ensure non-negative dimensions in Resize handler and OnLoad"
+      ]
+    },
     {
       "version": "1.0.6",
       "date": "2025-11-19",
