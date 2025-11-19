@@ -1,11 +1,20 @@
 {
-  "version": "1.0.4",
-  "buildDate": "2025-11-19 14:59:49",
+  "version": "1.0.5",
+  "buildDate": "2025-11-19 16:27:22",
   "components": {
-    "UnifiedSnoop": "1.0.4",
+    "UnifiedSnoop": "1.0.5",
     "XRecordEditor": "1.0.0"
   },
   "changelog": [
+    {
+      "version": "1.0.5",
+      "date": "2025-11-19",
+      "changes": [
+        "DEPLOYMENT: Forced clean rebuild with AutoCAD closed to ensure ALL fixes are in DLL",
+        "INCLUDES: All fixes from v1.0.2 (SplitterDistance, ListView headers)",
+        "INCLUDES: All enhancements from v1.0.4 (version-numbered error logs)"
+      ]
+    },
     {
       "version": "1.0.4",
       "date": "2025-11-19",
