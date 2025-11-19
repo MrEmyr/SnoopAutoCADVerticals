@@ -319,9 +319,9 @@ namespace UnifiedSnoop.UI
                 HideSelection = false,
                 MultiSelect = false,
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.None,  // No border on ListView itself
-                HeaderStyle = ColumnHeaderStyle.Clickable,  // Allow column resizing
-                Scrollable = true  // Ensure scrollbars are enabled
+                BorderStyle = BorderStyle.FixedSingle,
+                HeaderStyle = ColumnHeaderStyle.Nonclickable,  // Headers always visible
+                Scrollable = true
             };
 
             // Add columns to ListView with proper sizing
@@ -333,29 +333,19 @@ namespace UnifiedSnoop.UI
             _listView.DoubleClick += ListView_DoubleClick;
             _listView.MouseMove += ListView_MouseMove;
 
-            // Create a spacer panel to ensure column headers are visible
-            Panel headerSpacer = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 25,  // Explicit space for column headers
-                BackColor = SystemColors.Control
-            };
-
-            // Create container panel for ListView with proper spacing
+            // Create container panel for ListView with TOP margin to ensure headers show
             Panel listViewContainer = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(3, 3, 3, 3),  // Padding around ListView
+                Padding = new Padding(5, 10, 5, 5),  // 10px TOP padding to ensure headers are visible
                 BackColor = SystemColors.Control,
-                BorderStyle = BorderStyle.Fixed3D,  // Border on container instead
-                AutoScroll = false  // ListView handles its own scrolling
+                AutoScroll = false
             };
             listViewContainer.Controls.Add(_listView);
 
             // Add controls to split container in correct order
             _splitContainer.Panel1.Controls.Add(_treeView);
             _splitContainer.Panel2.Controls.Add(_searchPanel);      // Add search panel first (docks to top)
-            _splitContainer.Panel2.Controls.Add(headerSpacer);      // Add spacer second (docks below search)
             _splitContainer.Panel2.Controls.Add(listViewContainer); // Add container last (fills remaining space)
 
             // Create bottom status panel
