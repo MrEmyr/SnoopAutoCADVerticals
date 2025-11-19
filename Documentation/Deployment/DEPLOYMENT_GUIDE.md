@@ -73,6 +73,44 @@ dotnet build -c Release
 
 ## 🚀 **Deployment Instructions**
 
+### ⚠️ **MANDATORY: Use Deploy-ToBundle.ps1**
+
+**CRITICAL RULE: ALWAYS use `Deploy-ToBundle.ps1` for deployments!**
+
+✅ **Correct deployment command:**
+```powershell
+cd UnifiedSnoop\Deploy
+.\Deploy-ToBundle.ps1
+```
+
+❌ **DO NOT use Quick-Deploy.ps1** - It lacks critical safety checks!
+
+### Why Deploy-ToBundle.ps1 is Required
+
+**Safety Features:**
+- ✅ Detects running AutoCAD/Civil 3D processes
+- ✅ Blocks deployment if DLLs are locked
+- ✅ Validates version increment
+- ✅ Ensures proper changelog entries
+- ✅ Comprehensive build verification
+- ✅ Automatic Git commit and push
+
+**Note about Quick-Deploy.ps1:**
+`Quick-Deploy.ps1` is a convenience wrapper that calls `Deploy-ToBundle.ps1` with standard parameters. Both scripts provide the same safety checks.
+
+---
+
+### **Before Every Deployment**
+
+1. ✅ **Close ALL AutoCAD/Civil 3D instances**
+2. ✅ **Increment version** in `UnifiedSnoop/version.json`
+3. ✅ **Add changelog entry** with changes
+4. ✅ **Verify code compiles** without errors
+
+The script will automatically check these and block deployment if violated.
+
+---
+
 ### **For AutoCAD/Civil 3D 2024**
 
 1. **Locate the DLL:**

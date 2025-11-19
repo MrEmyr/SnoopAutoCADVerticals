@@ -1,6 +1,18 @@
 # Deploy-ToBundle.ps1
 # Deploys UnifiedSnoop to AutoCAD ApplicationPlugins bundle for testing
 # Supports both AutoCAD/Civil 3D 2024 (.NET Framework 4.8) and 2025+ (.NET 8.0)
+#
+# CRITICAL FIXES (2025-11-19):
+# - Added AutoCAD process detection (blocks deployment if AutoCAD is running)
+# - Removed dangerous obj folder fallback (was deploying stale/old DLLs)
+# - Added dotnet clean before build (prevents incremental build issues)
+# - Added DLL freshness check (warns if DLLs are older than 5 minutes)
+# - Build failures now STOP deployment (no silent failures)
+#
+# WHY obj FOLDER IS DANGEROUS:
+# The obj folder can contain stale DLLs from previous builds. Using it as a
+# fallback results in "successful" deployments that don't actually update the code.
+# This script now ONLY uses bin folder and fails hard if DLLs aren't fresh.
 
 param(
     [switch]$BuildFirst = $true,
@@ -28,6 +40,53 @@ $Build2025Path = Join-Path $BuildPath "net8.0-windows\win-x64"
 $BundleContentsPath = Join-Path $BundlePath "Contents"
 $Bundle2024Path = Join-Path $BundleContentsPath "2024"
 $Bundle2025Path = Join-Path $BundleContentsPath "2025"
+
+# ============================================================================
+# Check for Running AutoCAD/Civil3D Processes
+# ============================================================================
+
+Write-Host ""
+Write-Host "🔍 Checking for running AutoCAD/Civil 3D processes..." -ForegroundColor Cyan
+
+$acadProcesses = Get-Process | Where-Object {
+    $_.ProcessName -like "*acad*" -or 
+    $_.ProcessName -like "*civil*"
+}
+
+if ($acadProcesses) {
+    Write-Host ""
+    Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Red
+    Write-Host "║                                                                ║" -ForegroundColor Red
+    Write-Host "║              ❌ DEPLOYMENT BLOCKED ❌                         ║" -ForegroundColor Red
+    Write-Host "║                                                                ║" -ForegroundColor Red
+    Write-Host "╚════════════════════════════════════════════════════════════════╝" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "⚠️  AutoCAD/Civil 3D is currently running!" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "📋 Running processes detected:" -ForegroundColor Yellow
+    foreach ($process in $acadProcesses) {
+        Write-Host "   • $($process.ProcessName) (PID: $($process.Id), Started: $($process.StartTime))" -ForegroundColor Gray
+    }
+    Write-Host ""
+    Write-Host "🚫 Cannot deploy while AutoCAD is running because:" -ForegroundColor Red
+    Write-Host "   1. Loaded DLLs are locked by Windows" -ForegroundColor Gray
+    Write-Host "   2. Deployment will appear successful but use OLD files" -ForegroundColor Gray
+    Write-Host "   3. Your fixes won't actually be deployed!" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "✅ Required actions:" -ForegroundColor Green
+    Write-Host "   1. Close ALL AutoCAD/Civil 3D windows" -ForegroundColor White
+    Write-Host "   2. Wait for processes to fully exit" -ForegroundColor White
+    Write-Host "   3. Re-run this deployment script" -ForegroundColor White
+    Write-Host ""
+    Write-Host "💡 Tip: To verify processes are closed, run:" -ForegroundColor Cyan
+    Write-Host "   Get-Process | Where-Object {`$_.ProcessName -like '*acad*'}" -ForegroundColor Gray
+    Write-Host ""
+    
+    exit 1
+}
+
+Write-Host "✅ No AutoCAD processes detected - safe to proceed" -ForegroundColor Green
+Write-Host ""
 
 # ============================================================================
 # Read Version Information
@@ -125,13 +184,29 @@ Write-Host "╚═════════════════════�
 if ($BuildFirst) {
     Write-Host "🔨 Building UnifiedSnoop..." -ForegroundColor Yellow
     
+    # Clean before building to prevent stale DLL deployment
+    Write-Host "   → Cleaning previous build artifacts..." -ForegroundColor Cyan
     Push-Location $ProjectRoot
     try {
-        $buildOutput = dotnet build -c $Configuration 2>&1
+        $cleanOutput = dotnet clean -c $Configuration 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "⚠️  Clean had warnings (non-critical)" -ForegroundColor Yellow
+        }
+        
+        # Force complete rebuild with no incremental compilation
+        Write-Host "   → Building with --no-incremental flag..." -ForegroundColor Cyan
+        $buildOutput = dotnet build -c $Configuration --no-incremental 2>&1
         
         if ($LASTEXITCODE -ne 0) {
-            Write-Host "⚠️  UnifiedSnoop Build had errors (likely locked files)" -ForegroundColor Yellow
-            Write-Host "   Will attempt to deploy from obj folder..." -ForegroundColor Cyan
+            Write-Host ""
+            Write-Host "❌ ERROR: Build failed!" -ForegroundColor Red
+            Write-Host ""
+            Write-Host "Build output:" -ForegroundColor Yellow
+            Write-Host $buildOutput
+            Write-Host ""
+            Write-Host "⚠️  Cannot deploy - build must succeed first!" -ForegroundColor Red
+            Write-Host ""
+            exit 1
         }
         else {
             Write-Host "✅ UnifiedSnoop Build successful!" -ForegroundColor Green
@@ -151,8 +226,8 @@ if ($BuildFirst) {
             $buildOutput = dotnet build -c $Configuration 2>&1
             
             if ($LASTEXITCODE -ne 0) {
-                Write-Host "⚠️  XRecordEditor Build had errors (likely locked files)" -ForegroundColor Yellow
-                Write-Host "   Will attempt to deploy from obj folder..." -ForegroundColor Cyan
+                Write-Host "⚠️  XRecordEditor Build had errors" -ForegroundColor Yellow
+                Write-Host "   XRecordEditor deployment may be skipped (non-critical)" -ForegroundColor Cyan
             }
             else {
                 Write-Host "✅ XRecordEditor Build successful!" -ForegroundColor Green
@@ -179,30 +254,54 @@ Write-Host "`n📦 Verifying build outputs..." -ForegroundColor Yellow
 $dll2024 = Join-Path $Build2024Path "UnifiedSnoop.dll"
 $dll2025 = Join-Path $Build2025Path "UnifiedSnoop.dll"
 
-# Check for bin or obj outputs
-$obj2024Path = Join-Path $ProjectRoot "obj\x64\$Configuration\net48"
-$obj2024Dll = Join-Path $obj2024Path "UnifiedSnoop.dll"
-
-if (-not (Test-Path $dll2024) -and -not (Test-Path $obj2024Dll)) {
-    Write-Host "❌ ERROR: UnifiedSnoop.dll not found for 2024 (checked bin and obj)" -ForegroundColor Red
+# ONLY check bin folder - NEVER use obj folder (contains stale DLLs)
+if (-not (Test-Path $dll2024)) {
+    Write-Host ""
+    Write-Host "❌ ERROR: UnifiedSnoop.dll not found for 2024" -ForegroundColor Red
+    Write-Host "   Expected: $dll2024" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "⚠️  Build may have failed or AutoCAD is locking the DLL!" -ForegroundColor Yellow
+    Write-Host ""
     exit 1
 }
 
 if (-not (Test-Path $dll2025)) {
+    Write-Host ""
     Write-Host "❌ ERROR: UnifiedSnoop.dll not found for 2025+" -ForegroundColor Red
+    Write-Host "   Expected: $dll2025" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "⚠️  Build may have failed or AutoCAD is locking the DLL!" -ForegroundColor Yellow
+    Write-Host ""
     exit 1
 }
 
-if (Test-Path $dll2024) {
-    Write-Host "✅ 2024 build output verified (bin)" -ForegroundColor Green
-}
-elseif (Test-Path $obj2024Dll) {
-    Write-Host "✅ 2024 build output verified (obj - will use this)" -ForegroundColor Green
+# Verify DLLs are fresh (built within last 5 minutes)
+$dll2024Info = Get-Item $dll2024
+$dll2025Info = Get-Item $dll2025
+$now = Get-Date
+$maxAge = New-TimeSpan -Minutes 5
+
+if (($now - $dll2024Info.LastWriteTime) -gt $maxAge) {
+    Write-Host ""
+    Write-Host "⚠️  WARNING: 2024 DLL is old!" -ForegroundColor Yellow
+    Write-Host "   Last modified: $($dll2024Info.LastWriteTime)" -ForegroundColor Gray
+    Write-Host "   This may be a stale build!" -ForegroundColor Yellow
+    Write-Host ""
 }
 
-if (Test-Path $dll2025) {
-    Write-Host "✅ 2025 build output verified (bin)" -ForegroundColor Green
+if (($now - $dll2025Info.LastWriteTime) -gt $maxAge) {
+    Write-Host ""
+    Write-Host "⚠️  WARNING: 2025+ DLL is old!" -ForegroundColor Yellow
+    Write-Host "   Last modified: $($dll2025Info.LastWriteTime)" -ForegroundColor Gray
+    Write-Host "   This may be a stale build!" -ForegroundColor Yellow
+    Write-Host ""
 }
+
+Write-Host "✅ 2024 build output verified (bin)" -ForegroundColor Green
+Write-Host "   → $($dll2024Info.LastWriteTime) - $([math]::Round($dll2024Info.Length/1KB, 2)) KB" -ForegroundColor Gray
+
+Write-Host "✅ 2025 build output verified (bin)" -ForegroundColor Green
+Write-Host "   → $($dll2025Info.LastWriteTime) - $([math]::Round($dll2025Info.Length/1KB, 2)) KB" -ForegroundColor Gray
 
 # ============================================================================
 # Step 3: Clean bundle directory (if requested)
@@ -290,36 +389,36 @@ Write-Host "`n📦 Deploying DLLs..." -ForegroundColor Yellow
 # Deploy 2024 version
 Write-Host "   → Copying 2024 DLL (net48)..." -ForegroundColor Cyan
 
-# Check if main DLL is locked - if so, use obj folder
-$objPath2024 = Join-Path $ProjectRoot "obj\x64\$Configuration\net48"
-$useObjPath2024 = $false
-
+# Check if DLL is locked (should NOT happen since we check for AutoCAD at start)
 try {
-    # Try to open the file to see if it's locked
     $fileStream = [System.IO.File]::Open($dll2024, 'Open', 'Read', 'None')
     $fileStream.Close()
 }
 catch {
-    Write-Host "   ⚠️  DLL locked by AutoCAD, using obj folder..." -ForegroundColor Yellow
-    $useObjPath2024 = $true
+    Write-Host ""
+    Write-Host "❌ ERROR: DLL is locked!" -ForegroundColor Red
+    Write-Host "   File: $dll2024" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "⚠️  This should NOT happen - AutoCAD check should have caught this!" -ForegroundColor Yellow
+    Write-Host "   Check if any AutoCAD processes are still running:" -ForegroundColor Yellow
+    Write-Host "   Get-Process | Where-Object {`$_.ProcessName -like '*acad*'}" -ForegroundColor Cyan
+    Write-Host ""
+    exit 1
 }
 
-if ($useObjPath2024 -and (Test-Path $objPath2024)) {
-    # Copy only DLL and PDB files, not build artifacts
-    Copy-Item -Path "$objPath2024\*.dll" -Destination $Bundle2024Path -Force
-    Copy-Item -Path "$objPath2024\*.pdb" -Destination $Bundle2024Path -Force -ErrorAction SilentlyContinue
-    $dll2024FromObj = Join-Path $objPath2024 "UnifiedSnoop.dll"
-    if (Test-Path $dll2024FromObj) {
-        $size2024 = [math]::Round((Get-Item $dll2024FromObj).Length / 1KB, 1)
-        Write-Host "   ✅ 2024: UnifiedSnoop.dll ($size2024 KB) [from obj]" -ForegroundColor Green
-    }
-}
-else {
-    # Copy only DLL and PDB files, not build artifacts
+# Copy only DLL and PDB files from bin folder (NEVER use obj folder!)
+try {
     Copy-Item -Path "$Build2024Path\*.dll" -Destination $Bundle2024Path -Force
     Copy-Item -Path "$Build2024Path\*.pdb" -Destination $Bundle2024Path -Force -ErrorAction SilentlyContinue
     $size2024 = [math]::Round((Get-Item $dll2024).Length / 1KB, 1)
     Write-Host "   ✅ 2024: UnifiedSnoop.dll ($size2024 KB)" -ForegroundColor Green
+}
+catch {
+    Write-Host ""
+    Write-Host "❌ ERROR: Failed to copy 2024 DLL!" -ForegroundColor Red
+    Write-Host "   Error: $($_.Exception.Message)" -ForegroundColor Gray
+    Write-Host ""
+    exit 1
 }
 
 # Deploy 2025+ version
@@ -336,11 +435,9 @@ $XRecordEditorBuildPath = Join-Path $ProjectRoot "XRecordEditor\bin\x64\$Configu
 $XRecordEditor2024Path = Join-Path $XRecordEditorBuildPath "net48"
 $XRecordEditor2025Path = Join-Path $XRecordEditorBuildPath "net8.0-windows\win-x64"
 
-# Deploy XRecordEditor 2024 with locked file handling
+# Deploy XRecordEditor 2024 (ONLY from bin folder)
 if (Test-Path $XRecordEditor2024Path) {
     $xrec2024dll = Join-Path $XRecordEditor2024Path "XRecordEditor.dll"
-    $xrec2024objPath = Join-Path $ProjectRoot "XRecordEditor\obj\x64\$Configuration\net48"
-    $xrec2024objDll = Join-Path $xrec2024objPath "XRecordEditor.dll"
     
     if (Test-Path $xrec2024dll) {
         try {
@@ -349,17 +446,8 @@ if (Test-Path $XRecordEditor2024Path) {
             Write-Host "   ✅ 2024: XRecordEditor.dll ($xrecSize2024 KB)" -ForegroundColor Green
         }
         catch {
-            if (Test-Path $xrec2024objDll) {
-                Copy-Item -Path $xrec2024objDll -Destination $Bundle2024Path -Force
-                $xrecSize2024 = [math]::Round((Get-Item $xrec2024objDll).Length / 1KB, 1)
-                Write-Host "   ✅ 2024: XRecordEditor.dll ($xrecSize2024 KB) [from obj]" -ForegroundColor Green
-            }
+            Write-Host "   ⚠️  Failed to copy XRecordEditor.dll (non-critical)" -ForegroundColor Yellow
         }
-    }
-    elseif (Test-Path $xrec2024objDll) {
-        Copy-Item -Path $xrec2024objDll -Destination $Bundle2024Path -Force
-        $xrecSize2024 = [math]::Round((Get-Item $xrec2024objDll).Length / 1KB, 1)
-        Write-Host "   ✅ 2024: XRecordEditor.dll ($xrecSize2024 KB) [from obj]" -ForegroundColor Green
     }
 }
 else {

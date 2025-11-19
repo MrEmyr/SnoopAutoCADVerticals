@@ -1,11 +1,22 @@
 {
-  "version": "1.0.5",
-  "buildDate": "2025-11-19 16:27:22",
+  "version": "1.0.6",
+  "buildDate": "2025-11-19 16:56:12",
   "components": {
-    "UnifiedSnoop": "1.0.5",
+    "UnifiedSnoop": "1.0.6",
     "XRecordEditor": "1.0.0"
   },
   "changelog": [
+    {
+      "version": "1.0.6",
+      "date": "2025-11-19",
+      "changes": [
+        "DEPLOYMENT SCRIPT FIX: Removed dangerous obj folder fallback",
+        "DEPLOYMENT SCRIPT FIX: Added dotnet clean before build",
+        "DEPLOYMENT SCRIPT FIX: Build failures now block deployment",
+        "DEPLOYMENT SCRIPT FIX: Added DLL freshness verification",
+        "TEST DEPLOYMENT: Verifying no stale DLLs are deployed"
+      ]
+    },
     {
       "version": "1.0.5",
       "date": "2025-11-19",

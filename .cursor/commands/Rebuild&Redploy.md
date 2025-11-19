@@ -1,10 +1,23 @@
 # Rebuild and Redeploy UnifiedSnoop
 
+## ⚠️ MANDATORY: Use Deploy-ToBundle.ps1
+
+**ALWAYS use `Deploy-ToBundle.ps1` - DO NOT use Quick-Deploy.ps1**
+
 ## Quick Command
 ```powershell
 cd UnifiedSnoop\Deploy
-.\Quick-Deploy.ps1
+.\Deploy-ToBundle.ps1
 ```
+
+### Why This Script is Safe
+Both `Quick-Deploy.ps1` and `Deploy-ToBundle.ps1` provide:
+- ✅ Checks for running AutoCAD/Civil 3D (prevents locked file deployment)
+- ✅ Validates version increment
+- ✅ Ensures proper changelog entries
+- ✅ Comprehensive build verification
+
+Note: `Quick-Deploy.ps1` is a wrapper that calls `Deploy-ToBundle.ps1` with standard parameters.
 
 ## 📋 Pre-Deployment Checklist
 
@@ -98,10 +111,18 @@ The script will:
 ### Build errors
 → Run `dotnet clean` then redeploy
 
+## 📚 Documentation
+
+- **Deployment Rules (MANDATORY):** `Documentation/Deployment/DEPLOYMENT_RULES.md`
+- **Deployment Guide:** `Documentation/Deployment/DEPLOYMENT_GUIDE.md`
+- **Development Rules:** `Documentation/Development/DOCUMENTATION_RULES.md`
+
 ## 🔢 Version History Quick Reference
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.0.5 | 2025-11-19 | Deployment: All fixes properly deployed with AutoCAD closed |
+| 1.0.4 | 2025-11-19 | Version-numbered error logs |
 | 1.0.2 | 2025-11-19 | Fixed SplitterDistance crash, Fixed ListView headers |
 | 1.0.1 | 2025-11-19 | Documentation reorganization |
 | 1.0.0 | 2025-01-17 | Initial release |
