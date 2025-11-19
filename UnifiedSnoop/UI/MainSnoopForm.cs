@@ -310,9 +310,11 @@ namespace UnifiedSnoop.UI
             _searchPanel.Controls.Add(_btnCopyAll);
 
             // Create ListView (right panel of split container)
+            // Using Anchor instead of Dock to allow explicit positioning
             _listView = new ListView
             {
-                Dock = DockStyle.Fill,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                Location = new Point(5, 5),  // Start 5px from top to show headers
                 View = View.Details,
                 FullRowSelect = true,
                 GridLines = true,
@@ -320,7 +322,7 @@ namespace UnifiedSnoop.UI
                 MultiSelect = false,
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
-                HeaderStyle = ColumnHeaderStyle.Nonclickable,  // Headers always visible
+                HeaderStyle = ColumnHeaderStyle.Nonclickable,
                 Scrollable = true
             };
 
@@ -333,14 +335,22 @@ namespace UnifiedSnoop.UI
             _listView.DoubleClick += ListView_DoubleClick;
             _listView.MouseMove += ListView_MouseMove;
 
-            // Create container panel for ListView with TOP margin to ensure headers show
+            // Create container panel for ListView
             Panel listViewContainer = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(5, 10, 5, 5),  // 10px TOP padding to ensure headers are visible
                 BackColor = SystemColors.Control,
                 AutoScroll = false
             };
+            
+            // Size ListView properly when container resizes
+            listViewContainer.SizeChanged += (s, e) => {
+                _listView.Size = new Size(
+                    listViewContainer.ClientSize.Width - 10,  // Leave 5px margin on each side
+                    listViewContainer.ClientSize.Height - 10  // Leave 5px margin top and bottom
+                );
+            };
+            
             listViewContainer.Controls.Add(_listView);
 
             // Add controls to split container in correct order
