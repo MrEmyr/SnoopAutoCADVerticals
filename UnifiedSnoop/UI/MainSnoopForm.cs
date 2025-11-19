@@ -244,7 +244,8 @@ namespace UnifiedSnoop.UI
                 FullRowSelect = true,
                 ShowLines = true,
                 ShowPlusMinus = true,
-                ShowRootLines = true
+                ShowRootLines = true,
+                Scrollable = true  // Ensure scrollbars are enabled
             };
             _treeView.AfterSelect += TreeView_AfterSelect;
             _treeView.BeforeExpand += TreeView_BeforeExpand;
@@ -257,6 +258,7 @@ namespace UnifiedSnoop.UI
                 FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight,
                 WrapContents = false,
                 Padding = new Padding(5, 5, 5, 5),
+                Margin = new Padding(0, 0, 0, 3),  // 3px bottom margin for spacing
                 AutoScroll = true,
                 BackColor = SystemColors.Control
             };
@@ -318,8 +320,9 @@ namespace UnifiedSnoop.UI
                 HideSelection = false,
                 MultiSelect = false,
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.Fixed3D,
-                HeaderStyle = ColumnHeaderStyle.Clickable  // Allow column resizing
+                BorderStyle = BorderStyle.None,  // No border on ListView itself
+                HeaderStyle = ColumnHeaderStyle.Clickable,  // Allow column resizing
+                Scrollable = true  // Ensure scrollbars are enabled
             };
 
             // Add columns to ListView with proper sizing
@@ -331,12 +334,14 @@ namespace UnifiedSnoop.UI
             _listView.DoubleClick += ListView_DoubleClick;
             _listView.MouseMove += ListView_MouseMove;
 
-            // Create container panel for ListView with top padding to prevent header overlap
+            // Create container panel for ListView with proper spacing
             Panel listViewContainer = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(0, 5, 0, 0),  // 5px top padding to show header
-                BackColor = SystemColors.Control
+                Padding = new Padding(3, 5, 3, 3),  // Add padding to ensure headers are visible
+                BackColor = SystemColors.Control,
+                BorderStyle = BorderStyle.Fixed3D,  // Border on container instead
+                AutoScroll = false  // ListView handles its own scrolling
             };
             listViewContainer.Controls.Add(_listView);
 
