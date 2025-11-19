@@ -241,7 +241,8 @@ namespace UnifiedSnoop.UI
             _toolbarPanel.Controls.Add(_btnViewBookmarks);
 
             // Create split container
-            // Set initial distance here before adding to form
+            // NOTE: DO NOT set SplitterDistance here - it will crash before form is sized!
+            // SplitterDistance is set in OnLoad() after form layout is complete
             _splitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
@@ -249,9 +250,9 @@ namespace UnifiedSnoop.UI
                 BorderStyle = BorderStyle.Fixed3D,
                 IsSplitterFixed = false,
                 SplitterWidth = 4,  // Per UI spec line 80
-                Panel1MinSize = 200,  // Set min sizes immediately
-                Panel2MinSize = 400,
-                SplitterDistance = 400  // Set initial distance (will be adjusted in OnLoad if needed)
+                Panel1MinSize = 200,  // Minimum width for TreeView panel
+                Panel2MinSize = 400   // Minimum width for Property inspector panel
+                // SplitterDistance will be set in OnLoad() - line ~437
             };
 
             // Create TreeView (left panel of split container)

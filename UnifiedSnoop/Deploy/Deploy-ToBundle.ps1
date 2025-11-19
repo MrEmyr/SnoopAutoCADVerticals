@@ -35,6 +35,7 @@ $Bundle2025Path = Join-Path $BundleContentsPath "2025"
 
 $version = "Unknown"
 $deploymentTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$versionData = $null
 
 if (Test-Path $VersionFile) {
     try {
@@ -43,6 +44,69 @@ if (Test-Path $VersionFile) {
     }
     catch {
         Write-Host "⚠️  Could not read version file, using default" -ForegroundColor Yellow
+    }
+}
+
+# ============================================================================
+# Version Validation (Per Deployment Rules)
+# ============================================================================
+
+if ($versionData) {
+    # Validate semantic versioning format
+    if ($version -notmatch '^\d+\.\d+\.\d+$') {
+        Write-Host "❌ ERROR: Invalid version format '$version'" -ForegroundColor Red
+        Write-Host "   Expected format: MAJOR.MINOR.PATCH (e.g., 1.0.2)" -ForegroundColor Yellow
+        Write-Host "   See: Documentation/Deployment/VERSION_INCREMENT_POLICY.md" -ForegroundColor Cyan
+        exit 1
+    }
+    
+    # Check if previous deployment exists and version has been incremented
+    if (Test-Path $DeploymentLogFile) {
+        $lastDeployment = Get-Content $DeploymentLogFile -Tail 10 | Select-String -Pattern "Version: (\d+\.\d+\.\d+)" | Select-Object -Last 1
+        
+        if ($lastDeployment) {
+            $lastVersion = $lastDeployment.Matches.Groups[1].Value
+            
+            if ($lastVersion -eq $version) {
+                Write-Host "❌ ERROR: Version not incremented!" -ForegroundColor Red
+                Write-Host "   Last deployed version: v$lastVersion" -ForegroundColor Yellow
+                Write-Host "   Current version.json: v$version" -ForegroundColor Yellow
+                Write-Host "" -ForegroundColor Yellow
+                Write-Host "   📋 ACTION REQUIRED:" -ForegroundColor Cyan
+                Write-Host "   1. Update version in UnifiedSnoop/version.json" -ForegroundColor White
+                Write-Host "   2. Increment PATCH for bug fixes (e.g., $lastVersion → " -NoNewline -ForegroundColor White
+                
+                # Calculate next version
+                $parts = $lastVersion.Split('.')
+                $nextPatch = [int]$parts[2] + 1
+                $suggestedVersion = "$($parts[0]).$($parts[1]).$nextPatch"
+                Write-Host "$suggestedVersion)" -ForegroundColor Green
+                Write-Host "   3. Add changelog entry with your changes" -ForegroundColor White
+                Write-Host "" -ForegroundColor Yellow
+                Write-Host "   See: Documentation/Deployment/VERSION_INCREMENT_POLICY.md" -ForegroundColor Cyan
+                exit 1
+            }
+            else {
+                Write-Host "✅ Version incremented: v$lastVersion → v$version" -ForegroundColor Green
+            }
+        }
+    }
+    
+    # Validate changelog exists for current version
+    $hasChangelog = $false
+    foreach ($entry in $versionData.changelog) {
+        if ($entry.version -eq $version) {
+            $hasChangelog = $true
+            break
+        }
+    }
+    
+    if (-not $hasChangelog) {
+        Write-Host "⚠️  WARNING: No changelog entry for v$version" -ForegroundColor Yellow
+        Write-Host "   Add a changelog entry in version.json describing your changes" -ForegroundColor Cyan
+    }
+    else {
+        Write-Host "✅ Changelog validated for v$version" -ForegroundColor Green
     }
 }
 

@@ -1,11 +1,40 @@
 {
-  "version": "1.0.1",
-  "buildDate": "2025-11-19 14:29:18",
+  "version": "1.0.3",
+  "buildDate": "2025-11-19 14:58:25",
   "components": {
-    "UnifiedSnoop": "1.0.1",
+    "UnifiedSnoop": "1.0.3",
     "XRecordEditor": "1.0.0"
   },
   "changelog": [
+    {
+      "version": "1.0.3",
+      "date": "2025-11-19",
+      "changes": [
+        "DEPLOYMENT FIX: Force rebuild to ensure v1.0.2 code changes are in DLL",
+        "VERIFIED: SplitterDistance now set in OnLoad() not constructor",
+        "VERIFIED: ListView uses anchoring with dynamic resize for visible headers"
+      ]
+    },
+    {
+      "version": "1.0.2",
+      "date": "2025-11-19",
+      "changes": [
+        "CRITICAL FIX: Fixed SplitterDistance initialization crash on startup",
+        "CRITICAL FIX: Fixed ListView column headers being hidden",
+        "Added comprehensive diagnostic logging to LoadDatabaseTree method",
+        "Improved form layout initialization to prevent InvalidOperationException",
+        "Enhanced error handling and logging for UI initialization"
+      ]
+    },
+    {
+      "version": "1.0.1",
+      "date": "2025-11-19",
+      "changes": [
+        "Documentation reorganization and cleanup",
+        "Updated deployment scripts with GitHub integration",
+        "Improved version tracking and deployment logging"
+      ]
+    },
     {
       "version": "1.0.0",
       "date": "2025-01-17",

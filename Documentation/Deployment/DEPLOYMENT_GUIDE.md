@@ -1,7 +1,20 @@
 # UnifiedSnoop - Deployment Guide
 
-**Version:** 1.0  
-**Last Updated:** November 14, 2025
+**Version:** 1.1  
+**Last Updated:** November 19, 2025
+
+---
+
+## ⚠️ **CRITICAL: Version Increment Required**
+
+**Every deployment MUST increment the version number!**
+
+The deployment script now automatically enforces this rule. Deployment will fail if:
+- ❌ Version format is invalid (must be `MAJOR.MINOR.PATCH`)
+- ❌ Version not incremented since last deployment
+- ⚠️ Warning if changelog entry missing
+
+See [Version Increment Policy](#version-increment-policy) below for details.
 
 ---
 
@@ -173,6 +186,63 @@ Loader: C:\AutoCAD_Plugins\UnifiedSnoop\2024\UnifiedSnoop.dll
 HKEY_CURRENT_USER\Software\Autodesk\AutoCAD\R25.0\ACAD-xxxx:409\Applications\UnifiedSnoop
 Loader: C:\AutoCAD_Plugins\UnifiedSnoop\2025\UnifiedSnoop.dll
 ```
+
+---
+
+## 📋 **Version Increment Policy**
+
+### Semantic Versioning Rules
+
+UnifiedSnoop follows **Semantic Versioning 2.0.0** (`MAJOR.MINOR.PATCH`)
+
+| Change Type | Version Change | Example |
+|-------------|---------------|---------|
+| **Bug Fix** | Increment PATCH | `1.0.1` → `1.0.2` |
+| **New Feature** | Increment MINOR | `1.0.5` → `1.1.0` |
+| **Breaking Change** | Increment MAJOR | `1.9.0` → `2.0.0` |
+
+### How to Update Version
+
+**Before every deployment:**
+
+1. **Open** `UnifiedSnoop/version.json`
+
+2. **Increment version**:
+   ```json
+   {
+     "version": "1.0.3",  // ← INCREMENT THIS
+     "buildDate": "2025-11-19",  // ← Auto-updates during deployment
+     "components": {
+       "UnifiedSnoop": "1.0.3",  // ← INCREMENT THIS
+       "XRecordEditor": "1.0.0"
+     }
+   }
+   ```
+
+3. **Add changelog entry**:
+   ```json
+   "changelog": [
+     {
+       "version": "1.0.3",  // ← ADD NEW ENTRY AT TOP
+       "date": "2025-11-19",
+       "changes": [
+         "Fixed bug X",
+         "Improved feature Y"
+       ]
+     },
+     // ... previous versions
+   ]
+   ```
+
+### Validation During Deployment
+
+The deployment script validates:
+
+✅ **Version Format**: Must match `^\d+\.\d+\.\d+$` (e.g., `1.0.2`)  
+✅ **Version Increment**: Must be greater than last deployed version  
+⚠️ **Changelog Entry**: Warning if missing for current version
+
+**If validation fails**, deployment is blocked with helpful error message.
 
 ---
 
