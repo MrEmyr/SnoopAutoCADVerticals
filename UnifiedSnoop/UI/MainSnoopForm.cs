@@ -254,11 +254,10 @@ namespace UnifiedSnoop.UI
             _searchPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 38,
+                Height = 40,  // Increased from 38 to 40
                 FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight,
                 WrapContents = false,
-                Padding = new Padding(5, 5, 5, 5),
-                Margin = new Padding(0, 0, 0, 3),  // 3px bottom margin for spacing
+                Padding = new Padding(5, 5, 5, 8),  // Increased bottom padding to 8px
                 AutoScroll = true,
                 BackColor = SystemColors.Control
             };
@@ -334,21 +333,30 @@ namespace UnifiedSnoop.UI
             _listView.DoubleClick += ListView_DoubleClick;
             _listView.MouseMove += ListView_MouseMove;
 
+            // Create a spacer panel to ensure column headers are visible
+            Panel headerSpacer = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 25,  // Explicit space for column headers
+                BackColor = SystemColors.Control
+            };
+
             // Create container panel for ListView with proper spacing
             Panel listViewContainer = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(3, 5, 3, 3),  // Add padding to ensure headers are visible
+                Padding = new Padding(3, 3, 3, 3),  // Padding around ListView
                 BackColor = SystemColors.Control,
                 BorderStyle = BorderStyle.Fixed3D,  // Border on container instead
                 AutoScroll = false  // ListView handles its own scrolling
             };
             listViewContainer.Controls.Add(_listView);
 
-            // Add controls to split container
+            // Add controls to split container in correct order
             _splitContainer.Panel1.Controls.Add(_treeView);
-            _splitContainer.Panel2.Controls.Add(_searchPanel);  // Add search panel first (docks to top)
-            _splitContainer.Panel2.Controls.Add(listViewContainer);  // Add container last (fills remaining space)
+            _splitContainer.Panel2.Controls.Add(_searchPanel);      // Add search panel first (docks to top)
+            _splitContainer.Panel2.Controls.Add(headerSpacer);      // Add spacer second (docks below search)
+            _splitContainer.Panel2.Controls.Add(listViewContainer); // Add container last (fills remaining space)
 
             // Create bottom status panel
             _bottomPanel = new Panel
