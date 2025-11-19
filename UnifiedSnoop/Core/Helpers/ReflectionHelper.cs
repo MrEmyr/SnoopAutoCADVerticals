@@ -102,23 +102,108 @@ namespace UnifiedSnoop.Core.Helpers
             catch (TargetInvocationException ex)
             {
                 // Property getter threw an exception
-                propData.HasError = true;
                 #if NET8_0_OR_GREATER
-                propData.ErrorMessage = ex.InnerException?.Message ?? ex.Message;
+                string errorMessage = ex.InnerException?.Message ?? ex.Message;
                 #else
-                propData.ErrorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                string errorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
                 #endif
-                propData.Value = $"[Error: {propData.ErrorMessage}]";
+                
+                // Check if this is an "expected" error that should be suppressed
+                if (IsExpectedPropertyError(errorMessage, propInfo.Name))
+                {
+                    propData.Value = "[Not Applicable]";
+                    propData.HasError = false;  // Don't mark as error
+                }
+                else
+                {
+                    // Real error - show it
+                    propData.HasError = true;
+                    propData.ErrorMessage = errorMessage;
+                    propData.Value = $"[Error: {errorMessage}]";
+                }
             }
             catch (Exception ex)
             {
                 // Other reflection errors
-                propData.HasError = true;
-                propData.ErrorMessage = ex.Message;
-                propData.Value = $"[Error: {ex.Message}]";
+                if (IsExpectedPropertyError(ex.Message, propInfo.Name))
+                {
+                    propData.Value = "[Not Applicable]";
+                    propData.HasError = false;
+                }
+                else
+                {
+                    propData.HasError = true;
+                    propData.ErrorMessage = ex.Message;
+                    propData.Value = $"[Error: {ex.Message}]";
+                }
             }
 
             return propData;
+        }
+
+        /// <summary>
+        /// Determines if an error message represents an "expected" or "known" error
+        /// that shouldn't be displayed as a red error (just not applicable).
+        /// </summary>
+        private static bool IsExpectedPropertyError(string errorMessage, string propertyName)
+        {
+            if (string.IsNullOrEmpty(errorMessage))
+                return false;
+
+            // Common expected error messages that aren't really errors
+            string[] expectedErrors = new[]
+            {
+                "It is not a reference entity",
+                "not a reference entity",
+                "Retrieve attribute failed",
+                "retrieve attribute failed",
+                "Not applicable to this object",
+                "not applicable",
+                "This entity is not a block reference",
+                "not a block reference",
+                "This entity is not part of a dynamic block",
+                "not part of a dynamic block",
+                "No block table record",
+                "not a valid",
+                "Invalid entity",
+                "Cannot access",
+                "Operation is not valid",
+                "is not allowed",
+                "not supported",
+                "doesn't exist",
+                "does not exist"
+            };
+
+            // Check if error message contains any of the expected error phrases
+            foreach (var expectedError in expectedErrors)
+            {
+                if (errorMessage.IndexOf(expectedError, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+
+            // Specific properties that commonly fail and should be suppressed
+            // Only suppress these if they match common error patterns
+            string[] conditionallySupressedProperties = new[]
+            {
+                "ShowToolTip",
+                "IsReferenceSourceExisting",
+                "IsReferenceValid",
+                "IsReferenceSubObject",
+                "IsReferenceObject",
+                "IsReferenceScale"
+            };
+
+            foreach (var suppressedProp in conditionallySupressedProperties)
+            {
+                if (propertyName.Equals(suppressedProp, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

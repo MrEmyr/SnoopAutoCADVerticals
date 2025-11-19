@@ -1800,14 +1800,21 @@ namespace UnifiedSnoop.UI
                     else
                     {
                         #if NET8_0_OR_GREATER
-                        item.SubItems.Add(prop.Value ?? "[null]");
+                        string valueText = prop.Value ?? "[null]";
                         #else
-                        item.SubItems.Add(prop.Value ?? "[null]");
+                        string valueText = prop.Value ?? "[null]";
                         #endif
                         
+                        item.SubItems.Add(valueText);
+                        
+                        // Color coding for different property states
                         if (prop.IsCollection)
                         {
                             item.ForeColor = Color.Blue;
+                        }
+                        else if (valueText == "[Not Applicable]")
+                        {
+                            item.ForeColor = Color.Gray;
                         }
                     }
 
