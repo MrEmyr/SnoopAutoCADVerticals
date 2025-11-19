@@ -49,8 +49,10 @@ namespace UnifiedSnoop.UI
         private Button _btnCompare = null!;
         private Button _btnAddBookmark = null!;
         private Button _btnViewBookmarks = null!;
+        private Label _lblPropertyCount = null!;
         private Label _lblStatus = null!;
         private Panel _topPanel = null!;
+        private Panel _toolbarPanel = null!;
         private Panel _bottomPanel = null!;
         private FlowLayoutPanel _searchPanel = null!;
         private TextBox _txtSearch = null!;
@@ -69,8 +71,10 @@ namespace UnifiedSnoop.UI
         private Button _btnCompare;
         private Button _btnAddBookmark;
         private Button _btnViewBookmarks;
+        private Label _lblPropertyCount;
         private Label _lblStatus;
         private Panel _topPanel;
+        private Panel _toolbarPanel;
         private Panel _bottomPanel;
         private FlowLayoutPanel _searchPanel;
         private TextBox _txtSearch;
@@ -147,13 +151,34 @@ namespace UnifiedSnoop.UI
         private void InitializeForm()
         {
             // Set form properties
-            this.Text = $"UnifiedSnoop - Database Inspector ({VersionHelper.ExpectedVersionRange})";
-            this.Size = new Size(1200, 800);
+            string hostApp = VersionHelper.IsCivil3DAvailable() ? "Civil 3D" : "AutoCAD";
+            this.Text = $"UnifiedSnoop - Database Inspector ({hostApp})";
+            this.Size = new Size(1200, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.MinimumSize = new Size(900, 600);
+            this.MinimumSize = new Size(600, 400);
 
-            // Create top panel with buttons
+            // Create top panel with property count (per spec: 35px height)
             _topPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 35,
+                BackColor = SystemColors.Control,
+                Padding = new Padding(10, 8, 10, 8)
+            };
+
+            _lblPropertyCount = new Label
+            {
+                Text = "Ready",
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleLeft,
+                ForeColor = Color.Blue,
+                Font = new Font(this.Font, FontStyle.Bold)
+            };
+
+            _topPanel.Controls.Add(_lblPropertyCount);
+
+            // Create toolbar panel with buttons (40px height for comfort)
+            _toolbarPanel = new Panel
             {
                 Dock = DockStyle.Top,
                 Height = 40,
@@ -208,22 +233,12 @@ namespace UnifiedSnoop.UI
             };
             _btnViewBookmarks.Click += BtnViewBookmarks_Click;
 
-            _lblStatus = new Label
-            {
-                Text = "Ready",
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(605, 0, 0, 0),  // Increased for bookmark buttons
-                ForeColor = Color.Blue
-            };
-
-            _topPanel.Controls.Add(_lblStatus);  // Add first (back)
-            _topPanel.Controls.Add(_btnSelectObject);
-            _topPanel.Controls.Add(_btnRefresh);
-            _topPanel.Controls.Add(_btnExport);
-            _topPanel.Controls.Add(_btnCompare);
-            _topPanel.Controls.Add(_btnAddBookmark);
-            _topPanel.Controls.Add(_btnViewBookmarks);
+            _toolbarPanel.Controls.Add(_btnSelectObject);
+            _toolbarPanel.Controls.Add(_btnRefresh);
+            _toolbarPanel.Controls.Add(_btnExport);
+            _toolbarPanel.Controls.Add(_btnCompare);
+            _toolbarPanel.Controls.Add(_btnAddBookmark);
+            _toolbarPanel.Controls.Add(_btnViewBookmarks);
 
             // Create split container
             // Note: Panel min sizes and splitter distance are set in OnLoad to avoid initialization errors
@@ -233,7 +248,7 @@ namespace UnifiedSnoop.UI
                 Orientation = Orientation.Vertical,
                 BorderStyle = BorderStyle.Fixed3D,
                 IsSplitterFixed = false,
-                SplitterWidth = 5
+                SplitterWidth = 4  // Per UI spec line 80
             };
 
             // Create TreeView (left panel of split container)
@@ -369,27 +384,30 @@ namespace UnifiedSnoop.UI
             _splitContainer.Panel2.Controls.Add(headerSeparator);   // Add separator for visual space
             _splitContainer.Panel2.Controls.Add(listViewContainer); // Add container last (fills remaining space)
 
-            // Create bottom status panel
+            // Create bottom status panel (per spec: 25px height)
             _bottomPanel = new Panel
             {
                 Dock = DockStyle.Bottom,
                 Height = 25,
-                BorderStyle = BorderStyle.Fixed3D
+                BackColor = SystemColors.Control,
+                Padding = new Padding(10, 4, 10, 4),
+                BorderStyle = BorderStyle.FixedSingle
             };
 
-            Label lblInfo = new Label
+            _lblStatus = new Label
             {
-                Text = $"UnifiedSnoop v{App.App.ApplicationVersion} - {VersionHelper.TargetFramework}",
+                Text = "Ready",
                 Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(5, 0, 0, 0)
+                TextAlign = ContentAlignment.MiddleLeft
             };
-            _bottomPanel.Controls.Add(lblInfo);
+            _bottomPanel.Controls.Add(_lblStatus);
 
-            // Add controls to form
-            this.Controls.Add(_splitContainer);
-            this.Controls.Add(_topPanel);
-            this.Controls.Add(_bottomPanel);
+            // Add controls to form (order matters for docking!)
+            // Add in reverse order: bottom first, then top, then fill
+            this.Controls.Add(_splitContainer);    // Fills remaining space
+            this.Controls.Add(_toolbarPanel);      // Docks to top (below _topPanel)
+            this.Controls.Add(_topPanel);          // Docks to top
+            this.Controls.Add(_bottomPanel);       // Docks to bottom
 
             // Setup tooltips
             SetupTooltips();
@@ -420,9 +438,8 @@ namespace UnifiedSnoop.UI
                 _splitContainer.Panel1MinSize = 200;
                 _splitContainer.Panel2MinSize = 400;
                 
-                // Set SplitterDistance now that form is properly sized
-                // Calculate as 1/3 of width, ensuring it respects min/max constraints
-                int desiredDistance = this.ClientSize.Width / 3;
+                // Set SplitterDistance per spec: 400px for left panel (TreeView)
+                int desiredDistance = 400; // Per UI spec line 81
                 int minDistance = 200; // Panel1MinSize
                 int maxDistance = this.ClientSize.Width - 400 - _splitContainer.SplitterWidth; // Width - Panel2MinSize - SplitterWidth
                 
@@ -1728,7 +1745,8 @@ namespace UnifiedSnoop.UI
                 if (obj == null)
                 {
                     _allProperties = null;
-                    UpdateStatus("No object selected");
+                    UpdatePropertyCount("No object selected");
+                    UpdateStatus("Ready");
                     return;
                 }
 
@@ -1739,7 +1757,8 @@ namespace UnifiedSnoop.UI
 
                 if (_allProperties == null || _allProperties.Count == 0)
                 {
-                    UpdateStatus($"No properties found for {obj.GetType().Name}");
+                    UpdatePropertyCount($"No properties found for {obj.GetType().Name}");
+                    UpdateStatus("Ready");
                     
                     // Add a message to the ListView
                     var item = new ListViewItem("No properties available");
@@ -1753,7 +1772,9 @@ namespace UnifiedSnoop.UI
                 // Display properties (filtered if search text is present)
                 FilterProperties();
                 
-                UpdateStatus($"Loaded {_allProperties.Count} properties for {obj.GetType().Name}");
+                // Update property count in top panel
+                UpdatePropertyCount($"Loaded {_allProperties.Count} properties for {obj.GetType().Name}");
+                UpdateStatus("Ready");
             }
             catch (Exception ex)
             {
@@ -1872,7 +1893,7 @@ namespace UnifiedSnoop.UI
         #region Utility Methods
 
         /// <summary>
-        /// Updates the status label.
+        /// Updates the status label in the bottom panel.
         /// </summary>
         private void UpdateStatus(string message)
         {
@@ -1880,6 +1901,18 @@ namespace UnifiedSnoop.UI
             {
                 _lblStatus.Text = message;
                 _lblStatus.Refresh();
+            }
+        }
+
+        /// <summary>
+        /// Updates the property count label in the top panel.
+        /// </summary>
+        private void UpdatePropertyCount(string message)
+        {
+            if (_lblPropertyCount != null)
+            {
+                _lblPropertyCount.Text = message;
+                _lblPropertyCount.Refresh();
             }
         }
 
