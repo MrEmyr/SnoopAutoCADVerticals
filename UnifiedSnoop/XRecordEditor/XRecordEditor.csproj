@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Multi-targeting for AutoCAD 2024 (.NET Framework 4.8) and 2025+ (.NET 8.0) -->
+    <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+    
+    <!-- Common properties -->
+    <AssemblyName>XRecordEditor</AssemblyName>
+    <RootNamespace>UnifiedSnoop.XRecordEditor</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    
+    <!-- Enable Windows Forms -->
+    <UseWindowsForms>true</UseWindowsForms>
+    
+    <!-- Nullable reference types -->
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- .NET Framework 4.8 specific settings (AutoCAD 2024) -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
+    <DefineConstants>$(DefineConstants);NET48</DefineConstants>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- .NET 8.0 specific settings (AutoCAD 2025+) -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+    <DefineConstants>$(DefineConstants);NET8_0_OR_GREATER</DefineConstants>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- AutoCAD 2024 References (.NET Framework 4.8) -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="acdbmgd">
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\acdbmgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="acmgd">
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\acmgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="accoremgd">
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\accoremgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- AutoCAD 2025+ References (.NET 8.0) via NuGet -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+    <PackageReference Include="AutoCAD.NET" Version="25.0.1" />
+    <PackageReference Include="AutoCAD.NET.Model" Version="25.0.0" />
+  </ItemGroup>
+
+</Project>
+

@@ -134,7 +134,45 @@ Before testing in AutoCAD:
 - [ ] Bundle directory exists: `C:\ProgramData\Autodesk\ApplicationPlugins\UnifiedSnoop.bundle`
 - [ ] Both DLL versions present (2024 and 2025 folders)
 - [ ] PackageContents.xml copied correctly
+- [ ] **GitHub repository updated** (automatic)
 - [ ] AutoCAD/Civil 3D restarted (to load new version)
+
+---
+
+## 📤 **GitHub Integration**
+
+### **Automatic GitHub Updates**
+
+**⚠️ IMPORTANT RULE:** Every deployment automatically updates GitHub!
+
+The deployment script (`Deploy-ToBundle.ps1`) now includes automatic GitHub integration:
+
+1. **Stages all changes** (`git add -A`)
+2. **Commits with version info** (e.g., "Deployment v1.0.0 - 2024-11-19 10:30:00")
+3. **Pushes to GitHub** (`git push`)
+
+### **What Gets Committed:**
+- All source code changes
+- Binary files (DLLs) in the bundle
+- Documentation updates
+- Configuration changes
+
+### **Manual GitHub Update (if needed):**
+
+If automatic push fails, manually update:
+
+```powershell
+git add -A
+git commit -m "Manual deployment update"
+git push
+```
+
+### **Skipping GitHub Update:**
+
+The script will gracefully skip GitHub updates if:
+- Not in a git repository
+- No changes to commit
+- Git operations fail (with warnings)
 
 ---
 

@@ -170,6 +170,17 @@ namespace UnifiedSnoop.App
                 
                 // Database Object Collectors
                 registry.RegisterCollector(new Inspectors.AutoCAD.XRecordCollector());
+                
+                // Plant 3D Object Collectors (optional - works only if Plant 3D is available)
+                try
+                {
+                    registry.RegisterCollector(new Inspectors.AutoCAD.Plant3DPropertyCollector());
+                }
+                catch (System.Exception)
+                {
+                    // Plant 3D DLLs not available - this is OK, just skip it
+                    System.Diagnostics.Debug.WriteLine("Plant 3D collector not registered - Plant 3D DLLs not available");
+                }
 
                 var doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
                 if (doc != null)

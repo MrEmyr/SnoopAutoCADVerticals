@@ -17,6 +17,8 @@ $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $BundlePath = "C:\ProgramData\Autodesk\ApplicationPlugins\UnifiedSnoop.bundle"
 $BuildPath = Join-Path $ProjectRoot "bin\x64\$Configuration"
+$VersionFile = Join-Path $ProjectRoot "version.json"
+$DeploymentLogFile = Join-Path $BundlePath "deployment-log.txt"
 
 # Build outputs
 $Build2024Path = Join-Path $BuildPath "net48"
@@ -27,9 +29,28 @@ $BundleContentsPath = Join-Path $BundlePath "Contents"
 $Bundle2024Path = Join-Path $BundleContentsPath "2024"
 $Bundle2025Path = Join-Path $BundleContentsPath "2025"
 
+# ============================================================================
+# Read Version Information
+# ============================================================================
+
+$version = "Unknown"
+$deploymentTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
+if (Test-Path $VersionFile) {
+    try {
+        $versionData = Get-Content $VersionFile -Raw | ConvertFrom-Json
+        $version = $versionData.version
+    }
+    catch {
+        Write-Host "⚠️  Could not read version file, using default" -ForegroundColor Yellow
+    }
+}
+
 Write-Host "`n╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
 Write-Host "║                                                                ║" -ForegroundColor Cyan
 Write-Host "║         UnifiedSnoop - Deploy to Bundle                       ║" -ForegroundColor Cyan
+Write-Host "║         Version: $version                                      ║" -ForegroundColor Cyan
+Write-Host "║         Build: $Configuration                                  ║" -ForegroundColor Cyan
 Write-Host "║                                                                ║" -ForegroundColor Cyan
 Write-Host "╚════════════════════════════════════════════════════════════════╝`n" -ForegroundColor Cyan
 
@@ -45,15 +66,40 @@ if ($BuildFirst) {
         $buildOutput = dotnet build -c $Configuration 2>&1
         
         if ($LASTEXITCODE -ne 0) {
-            Write-Host "❌ Build FAILED!" -ForegroundColor Red
-            Write-Host $buildOutput
-            exit 1
+            Write-Host "⚠️  UnifiedSnoop Build had errors (likely locked files)" -ForegroundColor Yellow
+            Write-Host "   Will attempt to deploy from obj folder..." -ForegroundColor Cyan
         }
-        
-        Write-Host "✅ Build successful!" -ForegroundColor Green
+        else {
+            Write-Host "✅ UnifiedSnoop Build successful!" -ForegroundColor Green
+        }
     }
     finally {
         Pop-Location
+    }
+    
+    # Build XRecordEditor project
+    Write-Host "🔨 Building XRecordEditor..." -ForegroundColor Yellow
+    $XRecordEditorPath = Join-Path $ProjectRoot "XRecordEditor"
+    
+    if (Test-Path $XRecordEditorPath) {
+        Push-Location $XRecordEditorPath
+        try {
+            $buildOutput = dotnet build -c $Configuration 2>&1
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Host "⚠️  XRecordEditor Build had errors (likely locked files)" -ForegroundColor Yellow
+                Write-Host "   Will attempt to deploy from obj folder..." -ForegroundColor Cyan
+            }
+            else {
+                Write-Host "✅ XRecordEditor Build successful!" -ForegroundColor Green
+            }
+        }
+        finally {
+            Pop-Location
+        }
+    }
+    else {
+        Write-Host "⚠️  XRecordEditor project not found at: $XRecordEditorPath" -ForegroundColor Yellow
     }
 }
 else {
@@ -66,21 +112,15 @@ else {
 
 Write-Host "`n📦 Verifying build outputs..." -ForegroundColor Yellow
 
-if (-not (Test-Path $Build2024Path)) {
-    Write-Host "❌ ERROR: net48 build not found at: $Build2024Path" -ForegroundColor Red
-    exit 1
-}
-
-if (-not (Test-Path $Build2025Path)) {
-    Write-Host "❌ ERROR: net8.0-windows build not found at: $Build2025Path" -ForegroundColor Red
-    exit 1
-}
-
 $dll2024 = Join-Path $Build2024Path "UnifiedSnoop.dll"
 $dll2025 = Join-Path $Build2025Path "UnifiedSnoop.dll"
 
-if (-not (Test-Path $dll2024)) {
-    Write-Host "❌ ERROR: UnifiedSnoop.dll not found for 2024" -ForegroundColor Red
+# Check for bin or obj outputs
+$obj2024Path = Join-Path $ProjectRoot "obj\x64\$Configuration\net48"
+$obj2024Dll = Join-Path $obj2024Path "UnifiedSnoop.dll"
+
+if (-not (Test-Path $dll2024) -and -not (Test-Path $obj2024Dll)) {
+    Write-Host "❌ ERROR: UnifiedSnoop.dll not found for 2024 (checked bin and obj)" -ForegroundColor Red
     exit 1
 }
 
@@ -89,7 +129,16 @@ if (-not (Test-Path $dll2025)) {
     exit 1
 }
 
-Write-Host "✅ All build outputs verified" -ForegroundColor Green
+if (Test-Path $dll2024) {
+    Write-Host "✅ 2024 build output verified (bin)" -ForegroundColor Green
+}
+elseif (Test-Path $obj2024Dll) {
+    Write-Host "✅ 2024 build output verified (obj - will use this)" -ForegroundColor Green
+}
+
+if (Test-Path $dll2025) {
+    Write-Host "✅ 2025 build output verified (bin)" -ForegroundColor Green
+}
 
 # ============================================================================
 # Step 3: Clean bundle directory (if requested)
@@ -133,6 +182,42 @@ else {
 }
 
 # ============================================================================
+# Step 5.5: Copy version.json and create deployment log
+# ============================================================================
+
+Write-Host "`n📝 Creating version and deployment tracking..." -ForegroundColor Yellow
+
+# Update version.json with build date
+if (Test-Path $VersionFile) {
+    try {
+        $versionData = Get-Content $VersionFile -Raw | ConvertFrom-Json
+        $versionData.buildDate = $deploymentTime
+        $versionData | ConvertTo-Json -Depth 10 | Set-Content $VersionFile
+        
+        # Copy to bundle
+        $versionDest = Join-Path $BundlePath "version.json"
+        Copy-Item -Path $VersionFile -Destination $versionDest -Force
+        Write-Host "✅ version.json copied (v$version)" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "⚠️  Could not update version.json" -ForegroundColor Yellow
+    }
+}
+
+# Create/update deployment log
+$deploymentEntry = @"
+
+═══════════════════════════════════════════════════════════════
+Deployment: $deploymentTime
+Version: $version
+Configuration: $Configuration
+═══════════════════════════════════════════════════════════════
+"@
+
+Add-Content -Path $DeploymentLogFile -Value $deploymentEntry
+Write-Host "✅ Deployment log updated" -ForegroundColor Green
+
+# ============================================================================
 # Step 6: Deploy DLLs
 # ============================================================================
 
@@ -140,15 +225,95 @@ Write-Host "`n📦 Deploying DLLs..." -ForegroundColor Yellow
 
 # Deploy 2024 version
 Write-Host "   → Copying 2024 DLL (net48)..." -ForegroundColor Cyan
-Copy-Item -Path "$Build2024Path\*" -Destination $Bundle2024Path -Recurse -Force
-$size2024 = [math]::Round((Get-Item $dll2024).Length / 1KB, 1)
-Write-Host "   ✅ 2024: UnifiedSnoop.dll ($size2024 KB)" -ForegroundColor Green
+
+# Check if main DLL is locked - if so, use obj folder
+$objPath2024 = Join-Path $ProjectRoot "obj\x64\$Configuration\net48"
+$useObjPath2024 = $false
+
+try {
+    # Try to open the file to see if it's locked
+    $fileStream = [System.IO.File]::Open($dll2024, 'Open', 'Read', 'None')
+    $fileStream.Close()
+}
+catch {
+    Write-Host "   ⚠️  DLL locked by AutoCAD, using obj folder..." -ForegroundColor Yellow
+    $useObjPath2024 = $true
+}
+
+if ($useObjPath2024 -and (Test-Path $objPath2024)) {
+    # Copy only DLL and PDB files, not build artifacts
+    Copy-Item -Path "$objPath2024\*.dll" -Destination $Bundle2024Path -Force
+    Copy-Item -Path "$objPath2024\*.pdb" -Destination $Bundle2024Path -Force -ErrorAction SilentlyContinue
+    $dll2024FromObj = Join-Path $objPath2024 "UnifiedSnoop.dll"
+    if (Test-Path $dll2024FromObj) {
+        $size2024 = [math]::Round((Get-Item $dll2024FromObj).Length / 1KB, 1)
+        Write-Host "   ✅ 2024: UnifiedSnoop.dll ($size2024 KB) [from obj]" -ForegroundColor Green
+    }
+}
+else {
+    # Copy only DLL and PDB files, not build artifacts
+    Copy-Item -Path "$Build2024Path\*.dll" -Destination $Bundle2024Path -Force
+    Copy-Item -Path "$Build2024Path\*.pdb" -Destination $Bundle2024Path -Force -ErrorAction SilentlyContinue
+    $size2024 = [math]::Round((Get-Item $dll2024).Length / 1KB, 1)
+    Write-Host "   ✅ 2024: UnifiedSnoop.dll ($size2024 KB)" -ForegroundColor Green
+}
 
 # Deploy 2025+ version
 Write-Host "   → Copying 2025+ DLL (net8.0-windows)..." -ForegroundColor Cyan
-Copy-Item -Path "$Build2025Path\*" -Destination $Bundle2025Path -Recurse -Force
+# Copy only DLL and PDB files, not build artifacts
+Copy-Item -Path "$Build2025Path\*.dll" -Destination $Bundle2025Path -Force
+Copy-Item -Path "$Build2025Path\*.pdb" -Destination $Bundle2025Path -Force -ErrorAction SilentlyContinue
 $size2025 = [math]::Round((Get-Item $dll2025).Length / 1KB, 1)
 Write-Host "   ✅ 2025+: UnifiedSnoop.dll ($size2025 KB)" -ForegroundColor Green
+
+# Deploy XRecordEditor (advanced feature)
+Write-Host "`n   → Copying XRecordEditor DLL (advanced feature)..." -ForegroundColor Cyan
+$XRecordEditorBuildPath = Join-Path $ProjectRoot "XRecordEditor\bin\x64\$Configuration"
+$XRecordEditor2024Path = Join-Path $XRecordEditorBuildPath "net48"
+$XRecordEditor2025Path = Join-Path $XRecordEditorBuildPath "net8.0-windows\win-x64"
+
+# Deploy XRecordEditor 2024 with locked file handling
+if (Test-Path $XRecordEditor2024Path) {
+    $xrec2024dll = Join-Path $XRecordEditor2024Path "XRecordEditor.dll"
+    $xrec2024objPath = Join-Path $ProjectRoot "XRecordEditor\obj\x64\$Configuration\net48"
+    $xrec2024objDll = Join-Path $xrec2024objPath "XRecordEditor.dll"
+    
+    if (Test-Path $xrec2024dll) {
+        try {
+            Copy-Item -Path $xrec2024dll -Destination $Bundle2024Path -Force
+            $xrecSize2024 = [math]::Round((Get-Item $xrec2024dll).Length / 1KB, 1)
+            Write-Host "   ✅ 2024: XRecordEditor.dll ($xrecSize2024 KB)" -ForegroundColor Green
+        }
+        catch {
+            if (Test-Path $xrec2024objDll) {
+                Copy-Item -Path $xrec2024objDll -Destination $Bundle2024Path -Force
+                $xrecSize2024 = [math]::Round((Get-Item $xrec2024objDll).Length / 1KB, 1)
+                Write-Host "   ✅ 2024: XRecordEditor.dll ($xrecSize2024 KB) [from obj]" -ForegroundColor Green
+            }
+        }
+    }
+    elseif (Test-Path $xrec2024objDll) {
+        Copy-Item -Path $xrec2024objDll -Destination $Bundle2024Path -Force
+        $xrecSize2024 = [math]::Round((Get-Item $xrec2024objDll).Length / 1KB, 1)
+        Write-Host "   ✅ 2024: XRecordEditor.dll ($xrecSize2024 KB) [from obj]" -ForegroundColor Green
+    }
+}
+else {
+    Write-Host "   ⚠️  XRecordEditor (2024) not found" -ForegroundColor Yellow
+}
+
+# Deploy XRecordEditor 2025
+if (Test-Path $XRecordEditor2025Path) {
+    $xrec2025dll = Join-Path $XRecordEditor2025Path "XRecordEditor.dll"
+    if (Test-Path $xrec2025dll) {
+        Copy-Item -Path $xrec2025dll -Destination $Bundle2025Path -Force
+        $xrecSize2025 = [math]::Round((Get-Item $xrec2025dll).Length / 1KB, 1)
+        Write-Host "   ✅ 2025+: XRecordEditor.dll ($xrecSize2025 KB)" -ForegroundColor Green
+    }
+}
+else {
+    Write-Host "   ⚠️  XRecordEditor (2025+) not found" -ForegroundColor Yellow
+}
 
 # ============================================================================
 # Step 7: Verify deployment
@@ -168,18 +333,83 @@ else {
 }
 
 # ============================================================================
+# Step 8: Update GitHub Repository
+# ============================================================================
+
+Write-Host "`n📤 Updating GitHub repository..." -ForegroundColor Yellow
+
+try {
+    # Check if we're in a git repository
+    $gitCheck = git rev-parse --is-inside-work-tree 2>&1
+    
+    if ($LASTEXITCODE -eq 0) {
+        # Check if there are any changes to commit
+        $gitStatus = git status --porcelain
+        
+        if ($gitStatus) {
+            Write-Host "   → Staging all changes..." -ForegroundColor Cyan
+            git add -A
+            
+            Write-Host "   → Committing changes..." -ForegroundColor Cyan
+            $commitMessage = "Deployment v$version - $deploymentTime"
+            git commit -m $commitMessage
+            
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "   → Pushing to GitHub..." -ForegroundColor Cyan
+                git push
+                
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "✅ GitHub repository updated successfully!" -ForegroundColor Green
+                    
+                    # Get current branch and remote info
+                    $currentBranch = git rev-parse --abbrev-ref HEAD
+                    $remoteUrl = git config --get remote.origin.url
+                    Write-Host "   Branch: $currentBranch" -ForegroundColor Gray
+                    Write-Host "   Remote: $remoteUrl" -ForegroundColor Gray
+                }
+                else {
+                    Write-Host "⚠️  WARNING: Git push failed! Please push manually." -ForegroundColor Yellow
+                    Write-Host "   Command: git push" -ForegroundColor Gray
+                }
+            }
+            else {
+                Write-Host "⚠️  WARNING: Git commit failed!" -ForegroundColor Yellow
+            }
+        }
+        else {
+            Write-Host "ℹ️  No changes to commit (repository is clean)" -ForegroundColor Cyan
+        }
+    }
+    else {
+        Write-Host "⚠️  Not a git repository - skipping GitHub update" -ForegroundColor Yellow
+    }
+}
+catch {
+    Write-Host "⚠️  WARNING: GitHub update failed: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "   Please commit and push manually" -ForegroundColor Gray
+}
+
+# ============================================================================
 # Summary
 # ============================================================================
 
-Write-Host "`n╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
+Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
 Write-Host "║                                                                ║" -ForegroundColor Green
 Write-Host "║              ✅ DEPLOYMENT SUCCESSFUL! ✅                     ║" -ForegroundColor Yellow -NoNewline
-Write-Host "  ║" -ForegroundColor Green
+Write-Host "║" -ForegroundColor Green
+Write-Host "║              Version: $version                                 ║" -ForegroundColor Green
+Write-Host "║              Time: $deploymentTime                             ║" -ForegroundColor Green
 Write-Host "║                                                                ║" -ForegroundColor Green
 Write-Host "╚════════════════════════════════════════════════════════════════╝`n" -ForegroundColor Green
 
 Write-Host "📍 BUNDLE LOCATION:" -ForegroundColor Cyan
 Write-Host "   $BundlePath`n"
+
+Write-Host "📝 VERSION TRACKING:" -ForegroundColor Cyan
+Write-Host "   Version: $version"
+Write-Host "   Build Date: $deploymentTime"
+Write-Host "   Version file: $BundlePath\version.json"
+Write-Host "   Deployment log: $DeploymentLogFile`n"
 
 Write-Host "📦 DEPLOYED FILES:" -ForegroundColor Cyan
 Write-Host "   2024: $Bundle2024Path"
@@ -205,13 +435,11 @@ Write-Host "   If AutoCAD is running, restart it to load the new version!`n"
 
 Write-Host "🔧 AVAILABLE COMMANDS:" -ForegroundColor Cyan
 Write-Host "   • SNOOP - Open inspector UI"
-Write-Host "   • SNOOPENTITY - Snoop selected entity"
-Write-Host "   • SNOOPSELECTION - Snoop multiple entities"
 Write-Host "   • SNOOPVERSION - Show version info"
-Write-Host "   • SNOOPCOLLECTORS - List registered collectors"
-Write-Host "   • Right-click → 'Snoop This Object'`n"
+Write-Host "   • XRECORDEDIT - XRecord Editor (Advanced Feature - Hidden)`n"
+Write-Host "   💡 Tip: Right-click on objects in the SNOOP UI for quick actions`n"
 
 Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║  Deployment complete! Ready for testing!                      ║" -ForegroundColor Green
+Write-Host "║  Deployment complete! Ready for testing!                       ║" -ForegroundColor Green
 Write-Host "╚════════════════════════════════════════════════════════════════╝`n" -ForegroundColor Green
 

@@ -60,6 +60,20 @@
     <Reference Include="AeccDbMgd" HintPath="C:\Program Files\Autodesk\AutoCAD 2024\C3D\AeccDbMgd.dll" Private="False" />
     <Reference Include="AecBaseMgd" HintPath="C:\Program Files\Autodesk\AutoCAD 2024\C3D\AecBaseMgd.dll" Private="False" />
     
+    <!-- Plant 3D 2024 DLLs (optional - only if Plant 3D is installed) -->
+    <!-- These DLLs are not required for compilation but will be used at runtime if available -->
+    <!-- Common Plant 3D installation paths: -->
+    <!-- C:\Program Files\Autodesk\AutoCAD 2024\... or C:\Autodesk\AutoCAD_Plant_3D_2024\... -->
+    <Reference Include="PnP3dObjects" HintPath="C:\Autodesk\AutoCAD_Plant_3D_2024_SDK_English_Win_64bit_dlm\inc-x64\PnP3dObjectsMgd.dll" Private="False">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="PnPCommonDbx" HintPath="C:\Autodesk\AutoCAD_Plant_3D_2024_SDK_English_Win_64bit_dlm\inc-x64\PnPCommonDbxMgd.dll" Private="False">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="PnPDataLinks" HintPath="C:\Autodesk\AutoCAD_Plant_3D_2024_SDK_English_Win_64bit_dlm\inc-x64\PnPDataLinks.dll" Private="False">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    
     <!-- System References -->
     <Reference Include="System" />
     <Reference Include="System.Core" />

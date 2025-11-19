@@ -153,6 +153,7 @@ namespace UnifiedSnoop.App
                 System.Diagnostics.Debug.WriteLine($"SnoopVersion error: {ex.Message}");
             }
         }
+
     }
 }
 

@@ -102,14 +102,73 @@ namespace UnifiedSnoop.Core.Helpers
                 if (doc != null)
                 {
                     var ed = doc.Editor;
-                    ed.WriteMessage("\n========================================");
-                    ed.WriteMessage("\nUnifiedSnoop Version Information");
-                    ed.WriteMessage("\n========================================");
-                    ed.WriteMessage($"\nTarget Framework: {TargetFramework}");
-                    ed.WriteMessage($"\nExpected Version: {ExpectedVersionRange}");
-                    ed.WriteMessage($"\nAutoCAD Version: {GetAcadVersionString()}");
-                    ed.WriteMessage($"\nCivil 3D Available: {IsCivil3DAvailable()}");
-                    ed.WriteMessage("\n========================================\n");
+                    
+                    // Read version from version.json if available
+                    string version = "Unknown";
+                    string buildDate = "Unknown";
+                    string usVersion = "Unknown";
+                    string xrecVersion = "Unknown";
+                    
+                    try
+                    {
+                        var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                        var assemblyDir = System.IO.Path.GetDirectoryName(assemblyLocation);
+                        var bundleDir = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(assemblyDir));
+                        var versionFile = System.IO.Path.Combine(bundleDir, "version.json");
+                        
+                        if (System.IO.File.Exists(versionFile))
+                        {
+                            var jsonContent = System.IO.File.ReadAllText(versionFile);
+                            // Simple JSON parsing (avoiding dependency on JSON library)
+                            if (jsonContent.Contains("\"version\""))
+                            {
+                                var versionMatch = System.Text.RegularExpressions.Regex.Match(jsonContent, "\"version\"\\s*:\\s*\"([^\"]+)\"");
+                                if (versionMatch.Success) version = versionMatch.Groups[1].Value;
+                            }
+                            if (jsonContent.Contains("\"buildDate\""))
+                            {
+                                var buildMatch = System.Text.RegularExpressions.Regex.Match(jsonContent, "\"buildDate\"\\s*:\\s*\"([^\"]+)\"");
+                                if (buildMatch.Success) buildDate = buildMatch.Groups[1].Value;
+                            }
+                            // Parse component versions
+                            var usMatch = System.Text.RegularExpressions.Regex.Match(jsonContent, "\"UnifiedSnoop\"\\s*:\\s*\"([^\"]+)\"");
+                            if (usMatch.Success) usVersion = usMatch.Groups[1].Value;
+                            var xrecMatch = System.Text.RegularExpressions.Regex.Match(jsonContent, "\"XRecordEditor\"\\s*:\\s*\"([^\"]+)\"");
+                            if (xrecMatch.Success) xrecVersion = xrecMatch.Groups[1].Value;
+                        }
+                    }
+                    catch
+                    {
+                        // If version file reading fails, use defaults
+                    }
+                    
+                    ed.WriteMessage("\n╔════════════════════════════════════════════════════════════╗");
+                    ed.WriteMessage("\n║                                                            ║");
+                    ed.WriteMessage("\n║          UnifiedSnoop Version Information                  ║");
+                    ed.WriteMessage("\n║                                                            ║");
+                    ed.WriteMessage("\n╚════════════════════════════════════════════════════════════╝");
+                    ed.WriteMessage($"\n\n📦 Version: {version}");
+                    ed.WriteMessage($"\n📅 Build Date: {buildDate}");
+                    ed.WriteMessage("\n\n🔧 Components:");
+                    ed.WriteMessage($"\n   • UnifiedSnoop.dll: v{usVersion}");
+                    ed.WriteMessage($"\n   • XRecordEditor.dll: v{xrecVersion}");
+                    ed.WriteMessage("\n\n💻 Runtime Environment:");
+                    ed.WriteMessage($"\n   • Target Framework: {TargetFramework}");
+                    ed.WriteMessage($"\n   • Expected Version: {ExpectedVersionRange}");
+                    ed.WriteMessage($"\n   • AutoCAD Version: {GetAcadVersionString()}");
+                    ed.WriteMessage($"\n   • Civil 3D Available: {IsCivil3DAvailable()}");
+                    
+                    // Validate version
+                    if (ValidateVersion(out string errorMsg))
+                    {
+                        ed.WriteMessage("\n   • Version Check: ✅ Compatible");
+                    }
+                    else
+                    {
+                        ed.WriteMessage($"\n   • Version Check: ❌ {errorMsg}");
+                    }
+                    
+                    ed.WriteMessage("\n\n════════════════════════════════════════════════════════════\n");
                 }
             }
             catch (System.Exception ex)
@@ -145,8 +204,36 @@ namespace UnifiedSnoop.Core.Helpers
             try
             {
                 // Try to check if Civil 3D assemblies are loaded
-                var civilDocType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilApplication, AecBaseMgd");
-                return civilDocType != null;
+                // Try multiple assembly names for different Civil 3D versions
+                Type civilType = null;
+                
+                // Try AeccDbMgd first (Civil 3D 2021+)
+                civilType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilApplication, AeccDbMgd");
+                
+                // Fallback to AecBaseMgd (older versions)
+                if (civilType == null)
+                {
+                    civilType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilApplication, AecBaseMgd");
+                }
+                
+                // Try CivilDocument as alternative
+                if (civilType == null)
+                {
+                    civilType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilDocument, AeccDbMgd");
+                }
+                
+                if (civilType == null)
+                {
+                    civilType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilDocument, AecBaseMgd");
+                }
+                
+                // Try without assembly specification
+                if (civilType == null)
+                {
+                    civilType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilApplication");
+                }
+                
+                return civilType != null;
             }
             catch
             {

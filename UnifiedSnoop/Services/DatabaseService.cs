@@ -197,12 +197,31 @@ namespace UnifiedSnoop.Services
 
             try
             {
-                // Use reflection to access Civil 3D objects (for version compatibility)
-                var civilDocType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilDocument, AecBaseMgd");
+                // Try multiple type paths for Civil 3D document access (version compatibility)
+                Type civilDocType = null;
+                
+                // Try AeccDbMgd first (most common for Civil 3D 2021+)
+                civilDocType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilDocument, AeccDbMgd");
+                
+                // Fallback to AecBaseMgd
+                if (civilDocType == null)
+                {
+                    civilDocType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilDocument, AecBaseMgd");
+                }
+                
+                // Fallback to try without assembly specification
+                if (civilDocType == null)
+                {
+                    civilDocType = Type.GetType("Autodesk.Civil.ApplicationServices.CivilDocument");
+                }
+                
                 if (civilDocType != null)
                 {
                     var getDocMethod = civilDocType.GetMethod("GetCivilDocument", 
-                        new[] { typeof(Database) });
+                        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public,
+                        null,
+                        new[] { typeof(Database) },
+                        null);
                     
                     if (getDocMethod != null)
                     {
@@ -210,14 +229,39 @@ namespace UnifiedSnoop.Services
                         
                         if (civilDoc != null)
                         {
-                            // Add Civil 3D node
-                            var civil3DNode = new ObjectNode("Civil 3D Objects", civilDoc)
+                            // Add Civil 3D document node
+                            var civil3DNode = new ObjectNode("Civil 3D Document", civilDoc)
                             {
-                                Tag = civilDoc
+                                Tag = civilDoc,
+                                IsCollection = false
                             };
                             collections.Add(civil3DNode);
                         }
+                        else
+                        {
+                            // CivilDocument method returned null
+                            collections.Add(new ObjectNode("Civil 3D: No Civil document in this drawing")
+                            {
+                                Tag = "Info"
+                            });
+                        }
                     }
+                    else
+                    {
+                        // Could not find GetCivilDocument method
+                        collections.Add(new ObjectNode("Civil 3D: GetCivilDocument method not found")
+                        {
+                            Tag = "Info"
+                        });
+                    }
+                }
+                else
+                {
+                    // Could not load CivilDocument type
+                    collections.Add(new ObjectNode("Civil 3D: CivilDocument type not found")
+                    {
+                        Tag = "Info"
+                    });
                 }
             }
             catch (Exception ex)

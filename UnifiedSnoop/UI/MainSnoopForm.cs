@@ -328,6 +328,8 @@ namespace UnifiedSnoop.UI
             _listView.Columns.Add("Value", -2);  // -2 = auto-size to fill remaining space
 
             _listView.SelectedIndexChanged += ListView_SelectedIndexChanged;
+            _listView.DoubleClick += ListView_DoubleClick;
+            _listView.MouseMove += ListView_MouseMove;
 
             // Create container panel for ListView with top padding to prevent header overlap
             Panel listViewContainer = new Panel
@@ -458,7 +460,7 @@ namespace UnifiedSnoop.UI
 
             // TreeView and ListView tooltips
             _toolTip.SetToolTip(_treeView, "Object hierarchy. Click to select an object and view its properties. Press Ctrl+L to focus.");
-            _toolTip.SetToolTip(_listView, "Properties of the selected object. Click to select a property to copy. Press Ctrl+P to focus.");
+            _toolTip.SetToolTip(_listView, "Properties of the selected object. Double-click on blue collection items to expand them. Press Ctrl+P to focus.");
         }
 
         #endregion
@@ -505,8 +507,16 @@ namespace UnifiedSnoop.UI
                         civilNode.Nodes.Add(treeNode);
                     }
 
+                    // Always add Civil 3D node if detected, even if collections are empty
+                    // (may contain diagnostic/info messages)
                     if (civilNode.Nodes.Count > 0)
                     {
+                        rootNode.Nodes.Add(civilNode);
+                    }
+                    else
+                    {
+                        // Add a message if Civil 3D is detected but no collections found
+                        civilNode.Nodes.Add(new TreeNode("No Civil 3D collections found in this drawing"));
                         rootNode.Nodes.Add(civilNode);
                     }
                 }
@@ -800,6 +810,241 @@ namespace UnifiedSnoop.UI
         }
 
         /// <summary>
+        /// Expands a collection property and adds it to the tree view.
+        /// Handles various collection types including ObjectId collections, IEnumerable, etc.
+        /// </summary>
+        private void ExpandCollectionProperty(PropertyData propData)
+        {
+            try
+            {
+                if (propData.RawValue == null)
+                {
+                    MessageBox.Show("Collection is null.", "Information",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Get the current tree node (if any)
+                TreeNode currentNode = _treeView.SelectedNode;
+                
+                // Check if collection node already exists
+                string collectionNodeName = $"{propData.Name} [Collection]";
+                if (currentNode != null)
+                {
+                    foreach (TreeNode childNode in currentNode.Nodes)
+                    {
+                        if (childNode.Text == collectionNodeName)
+                        {
+                            // Already expanded, just select it
+                            _treeView.SelectedNode = childNode;
+                            childNode.Expand();
+                            UpdateStatus($"Collection '{propData.Name}' already expanded");
+                            return;
+                        }
+                    }
+                }
+
+                // Create a new tree node for this collection
+                TreeNode collectionNode = new TreeNode(collectionNodeName)
+                {
+                    Tag = propData.RawValue,
+                    ForeColor = Color.Blue
+                };
+
+                // Expand the collection based on its type
+                int itemCount = ExpandCollectionItems(collectionNode, propData.RawValue);
+
+                if (itemCount == 0)
+                {
+                    collectionNode.Nodes.Add("[Empty Collection]");
+                    collectionNode.ForeColor = Color.Gray;
+                }
+                else
+                {
+                    collectionNode.Text = $"{propData.Name} [Collection: {itemCount} items]";
+                }
+
+                // Add to tree
+                if (currentNode != null)
+                {
+                    currentNode.Nodes.Add(collectionNode);
+                    currentNode.Expand();
+                    _treeView.SelectedNode = collectionNode;
+                    collectionNode.Expand();
+                }
+                else
+                {
+                    _treeView.Nodes.Add(collectionNode);
+                    collectionNode.Expand();
+                }
+
+                UpdateStatus($"Expanded collection '{propData.Name}' with {itemCount} items");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error expanding collection '{propData.Name}': {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateStatus($"Error expanding collection: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Expands collection items into tree nodes.
+        /// Handles ObjectId collections, IEnumerable, arrays, and other collection types.
+        /// </summary>
+        private int ExpandCollectionItems(TreeNode parentNode, object collection)
+        {
+            int count = 0;
+
+            try
+            {
+                // Handle ObjectId collections (need transaction)
+                if (collection is IEnumerable)
+                {
+                    var enumerable = collection as IEnumerable;
+                    
+                    foreach (var item in enumerable)
+                    {
+                        try
+                        {
+                            object actualItem = item;
+                            string itemName = $"[Item {count}]";
+
+                            // If it's an ObjectId, open the object
+                            if (item is ObjectId objectId)
+                            {
+                                if (!objectId.IsNull && !objectId.IsErased)
+                                {
+                                    actualItem = _transactionHelper.Transaction.GetObject(objectId, OpenMode.ForRead);
+                                    itemName = $"[Item {count}] {actualItem.GetType().Name} [{objectId.Handle}]";
+                                }
+                                else
+                                {
+                                    itemName = $"[Item {count}] [Null or Erased ObjectId]";
+                                    actualItem = null;
+                                }
+                            }
+                            // Get name from object if it has a Name property
+                            else if (actualItem != null)
+                            {
+                                var nameProp = actualItem.GetType().GetProperty("Name");
+                                if (nameProp != null && nameProp.CanRead)
+                                {
+                                    try
+                                    {
+                                        var nameValue = nameProp.GetValue(actualItem, null);
+                                        if (nameValue != null)
+                                        {
+                                            itemName = $"[Item {count}] {nameValue}";
+                                        }
+                                        else
+                                        {
+                                            itemName = $"[Item {count}] {actualItem.GetType().Name}";
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        itemName = $"[Item {count}] {actualItem.GetType().Name}";
+                                    }
+                                }
+                                else if (IsSimpleType(actualItem))
+                                {
+                                    // For simple types (string, number, etc.), show the value
+                                    itemName = $"[Item {count}] {actualItem}";
+                                }
+                                else
+                                {
+                                    itemName = $"[Item {count}] {actualItem.GetType().Name}";
+                                }
+                            }
+
+                            // Create tree node for this item
+                            TreeNode itemNode = new TreeNode(itemName);
+                            
+                            if (actualItem != null)
+                            {
+                                itemNode.Tag = new ObjectNode(itemName, actualItem);
+                                
+                                // Add dummy node if this object might have children
+                                if (!IsSimpleType(actualItem) && HasPotentialChildren(actualItem))
+                                {
+                                    itemNode.Nodes.Add("Loading...");
+                                }
+                            }
+                            else
+                            {
+                                itemNode.ForeColor = Color.Gray;
+                            }
+
+                            parentNode.Nodes.Add(itemNode);
+                            count++;
+                        }
+                        catch (Exception ex)
+                        {
+                            // Add error node but continue processing
+                            TreeNode errorNode = new TreeNode($"[Item {count}] Error: {ex.Message}")
+                            {
+                                ForeColor = Color.Red
+                            };
+                            parentNode.Nodes.Add(errorNode);
+                            count++;
+                        }
+                    }
+                }
+                else
+                {
+                    // Not a recognized collection type
+                    parentNode.Nodes.Add($"[Unsupported collection type: {collection.GetType().Name}]");
+                }
+            }
+            catch (Exception ex)
+            {
+                parentNode.Nodes.Add($"[Error iterating collection: {ex.Message}]");
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// Determines if an object is a simple type that shouldn't be expanded.
+        /// </summary>
+        private bool IsSimpleType(object obj)
+        {
+            if (obj == null)
+                return true;
+
+            Type type = obj.GetType();
+            
+            return type.IsPrimitive
+                || type.IsEnum
+                || type == typeof(string)
+                || type == typeof(decimal)
+                || type == typeof(DateTime)
+                || type == typeof(DateTimeOffset)
+                || type == typeof(TimeSpan)
+                || type == typeof(Guid);
+        }
+
+        /// <summary>
+        /// Determines if an object potentially has child properties/collections.
+        /// </summary>
+        private bool HasPotentialChildren(object obj)
+        {
+            if (obj == null || IsSimpleType(obj))
+                return false;
+
+            Type type = obj.GetType();
+            
+            // AutoCAD objects typically have properties
+            if (typeof(DBObject).IsAssignableFrom(type))
+                return true;
+
+            // Check if it has any public readable properties
+            var properties = type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            return properties.Length > 0;
+        }
+
+        /// <summary>
         /// Handles ListView item selection.
         /// </summary>
         #if NET8_0_OR_GREATER
@@ -810,6 +1055,77 @@ namespace UnifiedSnoop.UI
         {
             // Enable/disable Copy Value button based on selection
             _btnCopyValue.Enabled = _listView.SelectedItems.Count > 0;
+        }
+
+        /// <summary>
+        /// Handles double-click on ListView items.
+        /// If the item is a collection, it expands to show the collection contents.
+        /// </summary>
+        #if NET8_0_OR_GREATER
+        private void ListView_DoubleClick(object? sender, EventArgs e)
+        #else
+        private void ListView_DoubleClick(object sender, EventArgs e)
+        #endif
+        {
+            try
+            {
+                if (_listView.SelectedItems.Count == 0)
+                    return;
+
+                ListViewItem selectedItem = _listView.SelectedItems[0];
+                
+                // Check if this is a collection property
+                if (selectedItem.Tag is PropertyData propData && propData.IsCollection && propData.RawValue != null)
+                {
+                    // Expand the collection
+                    ExpandCollectionProperty(propData);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error expanding collection: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateStatus($"Error expanding collection: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles mouse move over ListView items.
+        /// Changes cursor to hand pointer when hovering over collection items.
+        /// </summary>
+        #if NET8_0_OR_GREATER
+        private void ListView_MouseMove(object? sender, MouseEventArgs e)
+        #else
+        private void ListView_MouseMove(object sender, MouseEventArgs e)
+        #endif
+        {
+            try
+            {
+                // Get the item at the mouse position
+                ListViewItem item = _listView.GetItemAt(e.X, e.Y);
+                
+                if (item != null && item.Tag is PropertyData propData && propData.IsCollection && propData.RawValue != null)
+                {
+                    // Change cursor to hand pointer for clickable collection items
+                    if (_listView.Cursor != Cursors.Hand)
+                    {
+                        _listView.Cursor = Cursors.Hand;
+                    }
+                }
+                else
+                {
+                    // Reset cursor to default
+                    if (_listView.Cursor != Cursors.Default)
+                    {
+                        _listView.Cursor = Cursors.Default;
+                    }
+                }
+            }
+            catch
+            {
+                // Silently handle any errors in mouse move
+                _listView.Cursor = Cursors.Default;
+            }
         }
 
         /// <summary>

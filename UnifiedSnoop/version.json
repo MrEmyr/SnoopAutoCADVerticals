@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "buildDate": "2025-11-19 10:00:47",
+  "components": {
+    "UnifiedSnoop": "1.0.0",
+    "XRecordEditor": "1.0.0"
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2025-01-17",
+      "changes": [
+        "Initial release with unified snoop functionality",
+        "XRecord Editor as separate DLL with dynamic loading",
+        "Context menus for CRUD operations in XRecord Editor",
+        "Unlimited scrolling in XRecord Editor (BeginUpdate/EndUpdate)",
+        "Multi-target support for AutoCAD 2024 and 2025+",
+        "Comprehensive collector system for AutoCAD and Civil 3D objects"
+      ]
+    }
+  ]
+}
