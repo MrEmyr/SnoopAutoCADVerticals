@@ -20,6 +20,26 @@ Complete specification of the user interface, including:
 - Onboarding new developers
 - Planning UI enhancements
 
+### [UI_Layout.drawio](UI_Layout.drawio)
+Visual diagram of the UI layout created in draw.io, showing:
+- Complete component hierarchy
+- Visual layout structure
+- Color coding for different panel types
+- Row examples and formatting
+- Event flow and interactions
+- Dimensions and measurements
+
+**Use this diagram when:**
+- Visualizing the UI structure
+- Understanding component relationships
+- Planning layout changes
+- Communicating UI design to stakeholders
+- Reference during development
+
+**To view:**
+- Open in [draw.io](https://app.diagrams.net/) or compatible tool
+- Or import into Visual Studio Code with draw.io extension
+
 ### Other Documentation
 
 **In Project Root:**

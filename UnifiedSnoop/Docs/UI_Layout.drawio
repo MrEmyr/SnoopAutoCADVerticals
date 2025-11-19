@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-11-19T00:00:00.000Z" agent="5.0" version="22.0.0" etag="ui-layout" type="device">
+  <diagram id="UnifiedSnoop-UI-Layout" name="UI Layout Specification">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="UnifiedSnoop - UI Layout Specification" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="600" y="20" width="800" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Subtitle -->
+        <mxCell id="subtitle" value="Windows Forms Application - Component Hierarchy &amp; Layout" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="600" y="70" width="800" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Main Form Container -->
+        <mxCell id="main-form" value="MainSnoopForm&#xa;1200 × 700px (default)&#xa;Min: 600 × 400px" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;strokeWidth=3;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="120" width="1800" height="1200" as="geometry" />
+        </mxCell>
+
+        <!-- Top Panel -->
+        <mxCell id="top-panel" value="TopPanel (Docked Top)&#xa;Height: 35px&#xa;Background: SystemColors.Control&#xa;Padding: 10px, 8px, 10px, 8px" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="150" width="1760" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="top-label" value="Label: &quot;Loaded X properties for {ObjectType}&quot;&#xa;Color: Blue&#xa;Font: Bold, 9pt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=middle;spacingLeft=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="140" y="170" width="1720" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Split Container -->
+        <mxCell id="split-container" value="SplitContainer (Horizontal)&#xa;Splitter: 4px width&#xa;Splitter Distance: 400px (33% / 67%)&#xa;Border: Fixed3D" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="120" y="230" width="1760" height="1000" as="geometry" />
+        </mxCell>
+
+        <!-- Left Panel (TreeView) -->
+        <mxCell id="left-panel" value="Panel1 (Left)&#xa;Width: 400px (initial)&#xa;Min Width: 200px&#xa;Dock: Fill" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="140" y="260" width="580" height="950" as="geometry" />
+        </mxCell>
+
+        <mxCell id="treeview" value="TreeView&#xa;Dock: Fill&#xa;BackColor: White&#xa;BorderStyle: FixedSingle&#xa;ShowLines: true&#xa;ShowPlusMinus: true&#xa;FullRowSelect: true&#xa;Scrollable: true&#xa;ItemHeight: 20px" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="160" y="290" width="540" height="900" as="geometry" />
+        </mxCell>
+
+        <mxCell id="treeview-structure" value="Tree Structure:&#xa;├── Database (Root)&#xa;│   ├── AutoCAD Collections&#xa;│   │   ├── Block Definitions&#xa;│   │   ├── Layers&#xa;│   │   ├── Text Styles&#xa;│   │   ├── Dimension Styles&#xa;│   │   ├── Linetypes&#xa;│   │   ├── Named Objects Dictionary&#xa;│   │   └── Model Space&#xa;│   └── Civil 3D Collections (if available)&#xa;│       ├── Alignments&#xa;│       ├── Surfaces&#xa;│       └── ..." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#82b366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="180" y="320" width="500" height="850" as="geometry" />
+        </mxCell>
+
+        <!-- Right Panel (Property Inspector) -->
+        <mxCell id="right-panel" value="Panel2 (Right)&#xa;Width: 800px (initial)&#xa;Min Width: 400px&#xa;Dock: Fill" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="740" y="260" width="1120" height="950" as="geometry" />
+        </mxCell>
+
+        <!-- Search Panel -->
+        <mxCell id="search-panel" value="SearchPanel (Docked Top)&#xa;Height: 35px&#xa;Background: SystemColors.Control&#xa;Padding: 5px all sides" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="290" width="1080" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="search-label" value="Label: &quot;Search:&quot;&#xa;Width: 60px&#xa;Dock: Left" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="780" y="310" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="search-textbox" value="TextBox (Search Input)&#xa;Width: 200px&#xa;Dock: Left&#xa;Margin: 5,0,10,0&#xa;Real-time filtering" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="900" y="310" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="btn-clear" value="Button: &quot;Clear&quot;&#xa;Width: 70px&#xa;Dock: Left&#xa;Margin: 5,0,5,0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="310" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="btn-copy-value" value="Button: &quot;Copy Value&quot;&#xa;Width: 90px&#xa;Dock: Left&#xa;Margin: 5,0,5,0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="310" width="120" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="btn-copy-all" value="Button: &quot;Copy All&quot;&#xa;Width: 80px&#xa;Dock: Left&#xa;Margin: 5,0,5,0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="310" width="110" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Header Separator -->
+        <mxCell id="header-separator" value="HeaderSeparator (Docked Top)&#xa;Height: 25px&#xa;Background: SystemColors.ControlLight&#xa;BorderStyle: FixedSingle&#xa;Purpose: Visual space for ListView headers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="370" width="1080" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ListView Container -->
+        <mxCell id="listview-container" value="ListViewContainer (Docked Fill)&#xa;Background: SystemColors.Control&#xa;AutoScroll: false" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="760" y="440" width="1080" height="750" as="geometry" />
+        </mxCell>
+
+        <!-- ListView -->
+        <mxCell id="listview" value="ListView (Property Grid)&#xa;Anchor: Top|Bottom|Left|Right&#xa;Location: Point(5, 30)&#xa;View: Details&#xa;FullRowSelect: true&#xa;GridLines: true&#xa;BackColor: White&#xa;BorderStyle: FixedSingle&#xa;HeaderStyle: Clickable&#xa;Scrollable: true&#xa;Size: Dynamic (Container.Width-10, Container.Height-35)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="780" y="470" width="1040" height="690" as="geometry" />
+        </mxCell>
+
+        <!-- ListView Columns -->
+        <mxCell id="column-headers" value="Column Headers:" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="490" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="col-property" value="Property&#xa;Width: 250px&#xa;Alignment: Left" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=center;verticalAlign=middle;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="530" width="250" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="col-type" value="Type&#xa;Width: 180px&#xa;Alignment: Left" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=center;verticalAlign=middle;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1070" y="530" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="col-value" value="Value&#xa;Width: Auto-fill (-2)&#xa;Alignment: Left" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=center;verticalAlign=middle;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1270" y="530" width="530" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Row Examples -->
+        <mxCell id="row-examples" value="Row Examples:" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="590" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="row-standard" value="PropertyName | TypeName | FormattedValue" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="800" y="630" width="1000" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="row-collection" value="PropertyName | TypeName | [Collection: X items] (Blue Text)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontFamily=Courier New;fontColor=#0000ff;" vertex="1" parent="1">
+          <mxGeometry x="800" y="670" width="1000" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="row-error" value="PropertyName | TypeName | [Error: message] (Red Text)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontFamily=Courier New;fontColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="800" y="710" width="1000" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="row-not-applicable" value="PropertyName | TypeName | [Not Applicable] (Gray Text)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;fontFamily=Courier New;fontColor=#808080;" vertex="1" parent="1">
+          <mxGeometry x="800" y="750" width="1000" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Interaction Notes -->
+        <mxCell id="interaction-notes" value="Interactions:&#xa;• Single-click row: Select property&#xa;• Double-click collection (blue): Expand in tree&#xa;• Hover collection: Cursor → Hand pointer&#xa;• Search: Real-time filtering" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="800" width="1000" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Bottom Panel -->
+        <mxCell id="bottom-panel" value="StatusPanel (Docked Bottom)&#xa;Height: 25px&#xa;Background: SystemColors.Control&#xa;Padding: 10px, 4px, 10px, 4px&#xa;BorderStyle: FixedSingle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1250" width="1760" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="status-label" value="Label: Status messages, selected object info, operation feedback&#xa;Default: &quot;Ready&quot;&#xa;Font: Regular, 9pt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;verticalAlign=middle;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="1270" width="1720" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Color Legend -->
+        <mxCell id="legend-title" value="Color Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="1350" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-white" value="White Background" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1390" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-blue" value="Blue Text/Status" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;verticalAlign=middle;fontSize=10;fontColor=#0000ff;" vertex="1" parent="1">
+          <mxGeometry x="270" y="1390" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-red" value="Red Error" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=center;verticalAlign=middle;fontSize=10;fontColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1390" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-gray" value="Gray Not Applicable" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;verticalAlign=middle;fontSize=10;fontColor=#808080;" vertex="1" parent="1">
+          <mxGeometry x="610" y="1390" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-green" value="Green TreeView" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1390" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-purple" value="Purple Property Panel" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=center;verticalAlign=middle;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="950" y="1390" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Dimensions -->
+        <mxCell id="dimensions-title" value="Key Dimensions" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1200" y="1350" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dimensions-list" value="• Window: 1200 × 700px (default)&#xa;• Top Panel: 35px height&#xa;• Bottom Panel: 25px height&#xa;• Search Panel: 35px height&#xa;• Header Separator: 25px height&#xa;• Splitter: 4px width, 400px initial split&#xa;• TreeView Item Height: 20px&#xa;• ListView Top Margin: 30px&#xa;• ListView Side Margins: 5px each" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="1390" width="500" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- Event Flow -->
+        <mxCell id="events-title" value="Event Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="1450" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="event-flow" value="1. TreeView.AfterSelect → Load properties for selected node&#xa;2. ListView.DoubleClick (collection) → Expand collection in tree&#xa;3. ListView.MouseMove → Change cursor for collections&#xa;4. SearchBox.TextChanged → Filter properties in real-time&#xa;5. ClearButton.Click → Clear search filter&#xa;6. CopyValueButton.Click → Copy selected value to clipboard&#xa;7. CopyAllButton.Click → Copy all properties (TSV)&#xa;8. Container.SizeChanged → Resize ListView dynamically" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1490" width="1600" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows showing relationships -->
+        <mxCell id="arrow-top-to-split" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#333333;" edge="1" parent="1" source="top-panel" target="split-container">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1000" y="300" as="sourcePoint" />
+            <mxPoint x="1050" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-split-to-bottom" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#333333;" edge="1" parent="1" source="split-container" target="bottom-panel">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1000" y="1300" as="sourcePoint" />
+            <mxPoint x="1050" y="1250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-left-to-tree" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="left-panel" target="treeview">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="700" as="sourcePoint" />
+            <mxPoint x="450" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-right-to-search" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="right-panel" target="search-panel">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1300" y="300" as="sourcePoint" />
+            <mxPoint x="1350" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-search-to-separator" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="search-panel" target="header-separator">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1300" y="400" as="sourcePoint" />
+            <mxPoint x="1350" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-separator-to-container" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="header-separator" target="listview-container">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1300" y="500" as="sourcePoint" />
+            <mxPoint x="1350" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-container-to-listview" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="listview-container" target="listview">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1300" y="800" as="sourcePoint" />
+            <mxPoint x="1350" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+
