@@ -9,6 +9,12 @@
 # - Added DLL freshness check (warns if DLLs are older than 5 minutes)
 # - Build failures now STOP deployment (no silent failures)
 #
+# CRITICAL FIX (2025-11-20):
+# - Removed automatic git operations that caused script to hang
+# - Git Credential Manager caused hangs in PowerShell background jobs
+# - Users now manually commit/push with clear instructions
+# - See: Documentation/Deployment/DEPLOYMENT_SCRIPT_HANG_ANALYSIS.md
+#
 # WHY obj FOLDER IS DANGEROUS:
 # The obj folder can contain stale DLLs from previous builds. Using it as a
 # fallback results in "successful" deployments that don't actually update the code.
@@ -93,7 +99,8 @@ Write-Host ""
 # ============================================================================
 
 $version = "Unknown"
-$deploymentTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$deploymentStartTime = Get-Date  # For calculating script duration
+$deploymentTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"  # For display/logging
 $versionData = $null
 
 if (Test-Path $VersionFile) {
@@ -485,67 +492,10 @@ else {
 }
 
 # ============================================================================
-# Step 8: Update GitHub Repository
+# DEPLOYMENT SUCCESS REPORT (Show BEFORE git operations)
 # ============================================================================
 
-Write-Host "`n📤 Updating GitHub repository..." -ForegroundColor Yellow
-
-try {
-    # Check if we're in a git repository
-    $gitCheck = git rev-parse --is-inside-work-tree 2>&1
-    
-    if ($LASTEXITCODE -eq 0) {
-        # Check if there are any changes to commit
-        $gitStatus = git status --porcelain
-        
-        if ($gitStatus) {
-            Write-Host "   → Staging all changes..." -ForegroundColor Cyan
-            git add -A
-            
-            Write-Host "   → Committing changes..." -ForegroundColor Cyan
-            $commitMessage = "Deployment v$version - $deploymentTime"
-            git commit -m $commitMessage
-            
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "   → Pushing to GitHub..." -ForegroundColor Cyan
-                git push
-                
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Host "✅ GitHub repository updated successfully!" -ForegroundColor Green
-                    
-                    # Get current branch and remote info
-                    $currentBranch = git rev-parse --abbrev-ref HEAD
-                    $remoteUrl = git config --get remote.origin.url
-                    Write-Host "   Branch: $currentBranch" -ForegroundColor Gray
-                    Write-Host "   Remote: $remoteUrl" -ForegroundColor Gray
-                }
-                else {
-                    Write-Host "⚠️  WARNING: Git push failed! Please push manually." -ForegroundColor Yellow
-                    Write-Host "   Command: git push" -ForegroundColor Gray
-                }
-            }
-            else {
-                Write-Host "⚠️  WARNING: Git commit failed!" -ForegroundColor Yellow
-            }
-        }
-        else {
-            Write-Host "ℹ️  No changes to commit (repository is clean)" -ForegroundColor Cyan
-        }
-    }
-    else {
-        Write-Host "⚠️  Not a git repository - skipping GitHub update" -ForegroundColor Yellow
-    }
-}
-catch {
-    Write-Host "⚠️  WARNING: GitHub update failed: $($_.Exception.Message)" -ForegroundColor Yellow
-    Write-Host "   Please commit and push manually" -ForegroundColor Gray
-}
-
-# ============================================================================
-# Summary
-# ============================================================================
-
-Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
+Write-Host "`n╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
 Write-Host "║                                                                ║" -ForegroundColor Green
 Write-Host "║              ✅ DEPLOYMENT SUCCESSFUL! ✅                     ║" -ForegroundColor Yellow -NoNewline
 Write-Host "║" -ForegroundColor Green
@@ -594,4 +544,60 @@ Write-Host "   💡 Tip: Right-click on objects in the SNOOP UI for quick action
 Write-Host "╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
 Write-Host "║  Deployment complete! Ready for testing!                       ║" -ForegroundColor Green
 Write-Host "╚════════════════════════════════════════════════════════════════╝`n" -ForegroundColor Green
+
+# ============================================================================
+# Step 8: Git Operations Reminder (Manual)
+# ============================================================================
+# Note: Automatic git operations removed due to hanging issues with 
+# Git Credential Manager in background jobs. See:
+# Documentation/Deployment/DEPLOYMENT_SCRIPT_HANG_ANALYSIS.md
+
+Write-Host "📝 Git Operations (Manual):" -ForegroundColor Cyan
+Write-Host ""
+
+# Check if we're in a git repository and show appropriate message
+try {
+    $gitCheck = git rev-parse --is-inside-work-tree 2>&1
+    
+    if ($LASTEXITCODE -eq 0) {
+        # Check if there are any changes to commit
+        $gitStatus = git status --porcelain 2>&1
+        
+        if ($gitStatus) {
+            Write-Host "   ⚠️  You have uncommitted changes." -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "   To commit and push your deployment:" -ForegroundColor White
+            Write-Host ""
+            Write-Host "   git add -A" -ForegroundColor Gray
+            Write-Host "   git commit -m 'Deployment v$version - $deploymentTime'" -ForegroundColor Gray
+            Write-Host "   git push" -ForegroundColor Gray
+            Write-Host ""
+            
+            # Show what would be committed
+            Write-Host "   Changes to be committed:" -ForegroundColor Cyan
+            $changes = git status --short 2>&1
+            foreach ($change in $changes) {
+                Write-Host "   $change" -ForegroundColor Gray
+            }
+            Write-Host ""
+        }
+        else {
+            Write-Host "   ✅ Repository is clean - no changes to commit" -ForegroundColor Green
+            Write-Host ""
+        }
+    }
+}
+catch {
+    Write-Host "   ℹ️  Not a git repository - skipping" -ForegroundColor Cyan
+    Write-Host ""
+}
+
+Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Green
+Write-Host "Deployment script completed successfully!" -ForegroundColor Green
+Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Green
+Write-Host ""
+Write-Host "⏱️  Script completed in:" -ForegroundColor Cyan
+$scriptDuration = (Get-Date) - $deploymentStartTime
+Write-Host "   $([math]::Round($scriptDuration.TotalSeconds, 2)) seconds" -ForegroundColor Gray
+Write-Host ""
 

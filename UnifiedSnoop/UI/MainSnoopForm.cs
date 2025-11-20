@@ -250,8 +250,8 @@ namespace UnifiedSnoop.UI
                 BorderStyle = BorderStyle.Fixed3D,
                 IsSplitterFixed = false,
                 SplitterWidth = 4,  // Per UI spec line 80
-                Panel1MinSize = 200,  // Minimum width for TreeView panel
-                Panel2MinSize = 400   // Minimum width for Property inspector panel
+                Panel1MinSize = 150,  // Minimum width for TreeView panel (reduced from 200)
+                Panel2MinSize = 250   // Minimum width for Property inspector panel (reduced from 400)
                 // SplitterDistance will be set in OnLoad() - line ~437
             };
 
@@ -438,11 +438,11 @@ namespace UnifiedSnoop.UI
                 
                 // Set SplitterDistance per spec: 400px for left panel (TreeView)
                 int desiredDistance = 400; // Per UI spec
-                int minDistance = _splitContainer.Panel1MinSize; // 200
+                int minDistance = _splitContainer.Panel1MinSize; // 150
                 int maxDistance = availableWidth - _splitContainer.Panel2MinSize - _splitContainer.SplitterWidth;
                 
                 // Only adjust if we have enough space, otherwise keep the initial 400px
-                if (availableWidth >= 800) // Minimum sensible width (200 + 400 + margins)
+                if (availableWidth >= 600) // Minimum sensible width (150 + 250 + 4 + margins = 404+)
                 {
                     if (maxDistance > minDistance && desiredDistance > minDistance && desiredDistance < maxDistance)
                     {

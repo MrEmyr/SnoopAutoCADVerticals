@@ -1,7 +1,7 @@
 # UnifiedSnoop - Deployment Guide
 
-**Version:** 1.1  
-**Last Updated:** November 19, 2025
+**Version:** 1.2  
+**Last Updated:** November 20, 2025
 
 ---
 
@@ -93,7 +93,7 @@ cd UnifiedSnoop\Deploy
 - ✅ Validates version increment
 - ✅ Ensures proper changelog entries
 - ✅ Comprehensive build verification
-- ✅ Automatic Git commit and push
+- ✅ Git status check with manual commit instructions
 
 **Note about Quick-Deploy.ps1:**
 `Quick-Deploy.ps1` is a convenience wrapper that calls `Deploy-ToBundle.ps1` with standard parameters. Both scripts provide the same safety checks.
@@ -108,6 +108,27 @@ cd UnifiedSnoop\Deploy
 4. ✅ **Verify code compiles** without errors
 
 The script will automatically check these and block deployment if violated.
+
+---
+
+### **After Deployment: Git Operations**
+
+**Important:** As of November 20, 2025, git operations are now **manual** (previously caused script hangs).
+
+After successful deployment, the script displays uncommitted changes and provides exact commands:
+
+```powershell
+git add -A
+git commit -m "Deployment v1.0.8 - 2025-11-20 10:15:32"
+git push
+```
+
+**Why manual?**
+- Eliminates script hanging issues with Git Credential Manager
+- Gives you full control over commits and pushes
+- Follows best practices (deployment ≠ source control)
+
+**Detailed analysis:** See `Documentation/Deployment/DEPLOYMENT_SCRIPT_HANG_ANALYSIS.md`
 
 ---
 
