@@ -87,6 +87,13 @@
     <EmbeddedResource Include="Resources\**\*.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Exclude XRecordEditor folder from this project (it's a separate project) -->
+    <Compile Remove="XRecordEditor\**" />
+    <EmbeddedResource Remove="XRecordEditor\**" />
+    <None Remove="XRecordEditor\**" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>

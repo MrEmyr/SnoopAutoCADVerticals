@@ -42,7 +42,6 @@ namespace UnifiedSnoop.UI
         #if NET8_0_OR_GREATER
         private TreeView _treeView = null!;
         private ListView _listView = null!;
-        private SplitContainer _splitContainer = null!;
         private Button _btnSelectObject = null!;
         private Button _btnRefresh = null!;
         private Button _btnExport = null!;
@@ -54,6 +53,7 @@ namespace UnifiedSnoop.UI
         private Panel _topPanel = null!;
         private Panel _toolbarPanel = null!;
         private Panel _bottomPanel = null!;
+        private Panel _toolbarContainerPanel = null!;
         private FlowLayoutPanel _searchPanel = null!;
         private TextBox _txtSearch = null!;
         private Button _btnClearSearch = null!;
@@ -64,7 +64,6 @@ namespace UnifiedSnoop.UI
         #else
         private TreeView _treeView;
         private ListView _listView;
-        private SplitContainer _splitContainer;
         private Button _btnSelectObject;
         private Button _btnRefresh;
         private Button _btnExport;
@@ -76,6 +75,7 @@ namespace UnifiedSnoop.UI
         private Panel _topPanel;
         private Panel _toolbarPanel;
         private Panel _bottomPanel;
+        private Panel _toolbarContainerPanel;
         private FlowLayoutPanel _searchPanel;
         private TextBox _txtSearch;
         private Button _btnClearSearch;
@@ -177,18 +177,28 @@ namespace UnifiedSnoop.UI
 
             _topPanel.Controls.Add(_lblPropertyCount);
 
-            // Create toolbar panel with buttons (40px height for comfort)
-            _toolbarPanel = new Panel
+            // Create horizontal container panel for toolbar and search (side-by-side layout)
+            _toolbarContainerPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 40,
+                Height = 60,
+                BackColor = SystemColors.Control,
+                Padding = new Padding(0)
+            };
+
+            // Create toolbar panel with buttons (will dock left inside container)
+            _toolbarPanel = new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = 490,
+                Height = 60,
                 Padding = new Padding(5)
             };
 
             _btnSelectObject = new Button
             {
                 Text = "Select Object",
-                Location = new Point(10, 8),
+                Location = new Point(10, 18),
                 Size = new Size(120, 25)
             };
             _btnSelectObject.Click += BtnSelectObject_Click;
@@ -196,7 +206,7 @@ namespace UnifiedSnoop.UI
             _btnRefresh = new Button
             {
                 Text = "Refresh",
-                Location = new Point(140, 8),
+                Location = new Point(140, 18),
                 Size = new Size(80, 25)
             };
             _btnRefresh.Click += BtnRefresh_Click;
@@ -204,7 +214,7 @@ namespace UnifiedSnoop.UI
             _btnExport = new Button
             {
                 Text = "Export...",
-                Location = new Point(230, 8),
+                Location = new Point(230, 18),
                 Size = new Size(80, 25)
             };
             _btnExport.Click += BtnExport_Click;
@@ -212,7 +222,7 @@ namespace UnifiedSnoop.UI
             _btnCompare = new Button
             {
                 Text = "Compare...",
-                Location = new Point(320, 8),
+                Location = new Point(320, 18),
                 Size = new Size(90, 25)
             };
             _btnCompare.Click += BtnCompare_Click;
@@ -220,7 +230,7 @@ namespace UnifiedSnoop.UI
             _btnAddBookmark = new Button
             {
                 Text = "★ Add",
-                Location = new Point(420, 8),
+                Location = new Point(420, 18),
                 Size = new Size(70, 25)
             };
             _btnAddBookmark.Click += BtnAddBookmark_Click;
@@ -228,7 +238,7 @@ namespace UnifiedSnoop.UI
             _btnViewBookmarks = new Button
             {
                 Text = "Bookmarks",
-                Location = new Point(500, 8),
+                Location = new Point(500, 18),
                 Size = new Size(90, 25)
             };
             _btnViewBookmarks.Click += BtnViewBookmarks_Click;
@@ -240,60 +250,29 @@ namespace UnifiedSnoop.UI
             _toolbarPanel.Controls.Add(_btnAddBookmark);
             _toolbarPanel.Controls.Add(_btnViewBookmarks);
 
-            // Create split container
-            // NOTE: DO NOT set SplitterDistance here - it will crash before form is sized!
-            // SplitterDistance is set in OnLoad() after form layout is complete
-            _splitContainer = new SplitContainer
-            {
-                Dock = DockStyle.Fill,
-                Orientation = Orientation.Vertical,
-                BorderStyle = BorderStyle.Fixed3D,
-                IsSplitterFixed = false,
-                SplitterWidth = 4,  // Per UI spec line 80
-                Panel1MinSize = 150,  // Minimum width for TreeView panel (reduced from 200)
-                Panel2MinSize = 250   // Minimum width for Property inspector panel (reduced from 400)
-                // SplitterDistance will be set in OnLoad() - line ~437
-            };
-
-            // Create TreeView (left panel of split container)
-            _treeView = new TreeView
-            {
-                Dock = DockStyle.Fill,
-                HideSelection = false,
-                FullRowSelect = true,
-                ShowLines = true,
-                ShowPlusMinus = true,
-                ShowRootLines = true,
-                Scrollable = true  // Ensure scrollbars are enabled
-            };
-            _treeView.AfterSelect += TreeView_AfterSelect;
-            _treeView.BeforeExpand += TreeView_BeforeExpand;
-
-            // Create search panel with FlowLayoutPanel for responsive button layout
+            // Create search panel (will dock fill inside container, next to toolbar)
             _searchPanel = new FlowLayoutPanel
             {
-                Dock = DockStyle.Top,
-                Height = 40,  // Increased from 38 to 40
+                Dock = DockStyle.Fill,
+                Height = 60,
                 FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight,
                 WrapContents = false,
-                Padding = new Padding(5, 5, 5, 8),  // Increased bottom padding to 8px
-                AutoScroll = true,
+                Padding = new Padding(10, 18, 10, 5),  // Align with toolbar buttons
+                AutoScroll = false,
                 BackColor = SystemColors.Control
             };
 
             _lblSearch = new Label
             {
-                Text = "Search:",
+                Text = "Search Properties:",
                 AutoSize = true,
-                Anchor = AnchorStyles.Left,
-                Margin = new Padding(0, 4, 5, 0)
+                Margin = new Padding(0, 2, 5, 0)
             };
 
             _txtSearch = new TextBox
             {
-                Width = 200,
-                Anchor = AnchorStyles.Left,
-                Margin = new Padding(0, 2, 10, 0)
+                Width = 220,
+                Margin = new Padding(0, 0, 10, 0)
             };
             _txtSearch.TextChanged += TxtSearch_TextChanged;
 
@@ -317,8 +296,7 @@ namespace UnifiedSnoop.UI
             _btnCopyAll = new Button
             {
                 Text = "Copy All",
-                Size = new Size(80, 25),
-                Margin = new Padding(0, 0, 0, 0)
+                Size = new Size(80, 25)
             };
             _btnCopyAll.Click += BtnCopyAll_Click;
 
@@ -328,58 +306,82 @@ namespace UnifiedSnoop.UI
             _searchPanel.Controls.Add(_btnCopyValue);
             _searchPanel.Controls.Add(_btnCopyAll);
 
-            // Create ListView (right panel of split container)
-            // CRITICAL FIX: Use specific positioning to ensure headers are always visible
+            // Add toolbar and search panels to the container (side-by-side)
+            _toolbarContainerPanel.Controls.Add(_searchPanel);  // Add Fill panel first
+            _toolbarContainerPanel.Controls.Add(_toolbarPanel); // Then Left panel
+
+            // ========================================
+            // REDESIGNED UI: Simple Panel Layout
+            // ========================================
+            // Replaces problematic SplitContainer with basic panels
+            // Left panel (TreeView) docks left with fixed width
+            // Right panel (Properties) fills remaining space
+            
+            // Create left panel for TreeView
+            Panel leftPanel = new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = 400,  // Fixed width, user can resize form
+                BorderStyle = BorderStyle.Fixed3D
+            };
+
+            // Create TreeView
+            _treeView = new TreeView
+            {
+                Dock = DockStyle.Fill,
+                HideSelection = false,
+                FullRowSelect = true,
+                ShowLines = true,
+                ShowPlusMinus = true,
+                ShowRootLines = true,
+                Scrollable = true
+            };
+            _treeView.AfterSelect += TreeView_AfterSelect;
+            _treeView.BeforeExpand += TreeView_BeforeExpand;
+            
+            leftPanel.Controls.Add(_treeView);
+
+            // Create right panel for properties (fills remaining space)
+            Panel rightPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BorderStyle = BorderStyle.Fixed3D,
+                Padding = new Padding(0)  // No padding - let controls manage their own spacing
+            };
+
+            // Create ListView - fills the entire right panel
             _listView = new ListView
             {
+                Dock = DockStyle.Fill,
                 View = View.Details,
                 FullRowSelect = true,
                 GridLines = true,
                 HideSelection = false,
                 MultiSelect = false,
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
                 HeaderStyle = ColumnHeaderStyle.Clickable,
-                Scrollable = true,
-                // Use Anchor for proper resizing, not Dock
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                Location = new Point(10, 50),  // Start well below search panel (40px) + spacing
-                Size = new Size(100, 100)  // Will be resized in Panel2.Resize event
+                Scrollable = true
             };
 
-            // Add columns to ListView with proper sizing
+            // Add columns
             _listView.Columns.Add("Property", 250);
             _listView.Columns.Add("Type", 180);
-            _listView.Columns.Add("Value", -2);  // -2 = auto-size to fill remaining space
+            _listView.Columns.Add("Value", -2);  // Auto-size
 
             _listView.SelectedIndexChanged += ListView_SelectedIndexChanged;
             _listView.DoubleClick += ListView_DoubleClick;
             _listView.MouseMove += ListView_MouseMove;
 
-            // Add controls to split container in correct order
-            // CRITICAL FIX: Add directly to Panel2 without intermediate container to avoid header hiding
-            _splitContainer.Panel1.Controls.Add(_treeView);
-            _splitContainer.Panel2.Controls.Add(_searchPanel);  // Docks to top (40px height)
-            _splitContainer.Panel2.Controls.Add(_listView);     // Anchored, positioned below search
-            
-            // Handle Panel2 resize to properly size ListView and ensure headers stay visible
-            _splitContainer.Panel2.Resize += (sender, e) =>
+            // Add ListView to right panel (ONLY control in right panel)
+            rightPanel.Controls.Add(_listView);
+
+            // Create splitter bar for manual resize (docks between left and right panels)
+            Splitter splitter = new Splitter
             {
-                if (_listView != null && _splitContainer.Panel2 != null)
-                {
-                    int availableWidth = _splitContainer.Panel2.ClientSize.Width;
-                    int availableHeight = _splitContainer.Panel2.ClientSize.Height;
-                    int searchPanelHeight = _searchPanel.Height;
-                    
-                    // Position ListView below search panel with margins
-                    _listView.Location = new Point(10, searchPanelHeight + 10);
-                    
-                    // Calculate dimensions ensuring non-negative values to prevent rendering issues
-                    int listViewWidth = Math.Max(0, availableWidth - 20);  // 10px margin on each side
-                    int listViewHeight = Math.Max(0, availableHeight - searchPanelHeight - 20);  // 10px top + 10px bottom margin
-                    
-                    _listView.Size = new Size(listViewWidth, listViewHeight);
-                }
+                Dock = DockStyle.Left,
+                Width = 4,
+                BackColor = SystemColors.ControlDark,
+                Cursor = Cursors.VSplit
             };
 
             // Create bottom status panel (per spec: 25px height)
@@ -402,11 +404,12 @@ namespace UnifiedSnoop.UI
 
             // Add controls to form (order matters for docking!)
             // CRITICAL: Add in specific order for proper docking behavior
-            // Bottom docks first, then top elements, then fill
-            this.Controls.Add(_bottomPanel);       // Dock to bottom first
-            this.Controls.Add(_topPanel);          // Dock to top (occupies top position)
-            this.Controls.Add(_toolbarPanel);      // Dock to top (below _topPanel)
-            this.Controls.Add(_splitContainer);    // Fill remaining space last
+            this.Controls.Add(_bottomPanel);            // 1. Dock to bottom first
+            this.Controls.Add(_topPanel);               // 2. Dock to top (property count label)
+            this.Controls.Add(_toolbarContainerPanel);  // 3. Dock to top (contains toolbar + search side-by-side)
+            this.Controls.Add(rightPanel);              // 4. Dock to fill (properties ListView)
+            this.Controls.Add(splitter);                // 5. Dock to left (resize bar)
+            this.Controls.Add(leftPanel);               // 6. Dock to left (treeview)
 
             // Setup tooltips
             SetupTooltips();
@@ -425,60 +428,12 @@ namespace UnifiedSnoop.UI
         }
 
         /// <summary>
-        /// Called when the form is loaded - sets up splitter distance after form is sized.
+        /// Called when the form is loaded.
         /// </summary>
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            
-            try
-            {
-                // Calculate available width for split container
-                int availableWidth = this.ClientSize.Width;
-                
-                // Set SplitterDistance per spec: 400px for left panel (TreeView)
-                int desiredDistance = 400; // Per UI spec
-                int minDistance = _splitContainer.Panel1MinSize; // 150
-                int maxDistance = availableWidth - _splitContainer.Panel2MinSize - _splitContainer.SplitterWidth;
-                
-                // Only adjust if we have enough space, otherwise keep the initial 400px
-                if (availableWidth >= 600) // Minimum sensible width (150 + 250 + 4 + margins = 404+)
-                {
-                    if (maxDistance > minDistance && desiredDistance > minDistance && desiredDistance < maxDistance)
-                    {
-                        _splitContainer.SplitterDistance = desiredDistance;
-                    }
-                    else if (maxDistance > minDistance)
-                    {
-                        // Use a proportion: 1/3 for tree, 2/3 for properties
-                        _splitContainer.SplitterDistance = availableWidth / 3;
-                    }
-                }
-                // If form is too small, keep the initial 400px and let user adjust
-                
-                // CRITICAL: Trigger initial ListView sizing to ensure headers are visible
-                if (_listView != null && _splitContainer.Panel2 != null)
-                {
-                    int panelWidth = _splitContainer.Panel2.ClientSize.Width;
-                    int panelHeight = _splitContainer.Panel2.ClientSize.Height;
-                    int searchPanelHeight = _searchPanel.Height;
-                    
-                    _listView.Location = new Point(10, searchPanelHeight + 10);
-                    
-                    // Calculate dimensions ensuring non-negative values to prevent rendering issues
-                    int listViewWidth = Math.Max(0, panelWidth - 20);
-                    int listViewHeight = Math.Max(0, panelHeight - searchPanelHeight - 20);
-                    
-                    _listView.Size = new Size(listViewWidth, listViewHeight);
-                }
-                
-                UpdateStatus($"Form loaded: {availableWidth}px wide, splitter at {_splitContainer.SplitterDistance}px");
-            }
-            catch (System.Exception ex)
-            {
-                Services.ErrorLogService.Instance.LogError("Error setting splitter distance", ex, "MainSnoopForm.OnLoad");
-                UpdateStatus($"Warning: Splitter setup error - using defaults");
-            }
+            UpdateStatus("Form loaded - ready");
         }
 
         /// <summary>

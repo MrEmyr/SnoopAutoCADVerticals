@@ -34,7 +34,7 @@
         <Command Global="SNOOP" Local="SNOOP"/>
       </Commands>
     </ComponentEntry>
-    <!-- XRecord Editor (Standalone - loads on demand) -->
+    <!-- XRecord Editor (Separate DLL - loads on demand) -->
     <ComponentEntry 
       AppName="XRecordEditor2024" 
       ModuleName="./Contents/2024/XRecordEditor.dll" 
@@ -63,7 +63,7 @@
         <Command Global="SNOOP" Local="SNOOP"/>
       </Commands>
     </ComponentEntry>
-    <!-- XRecord Editor (Standalone - loads on demand) -->
+    <!-- XRecord Editor (Separate DLL - loads on demand) -->
     <ComponentEntry 
       AppName="XRecordEditor2025" 
       ModuleName="./Contents/2025/XRecordEditor.dll" 

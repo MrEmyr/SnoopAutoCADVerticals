@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Autodesk.AutoCAD.DatabaseServices;
+using UnifiedSnoop.Core.Helpers;
+using UnifiedSnoop.Services;
 
 #if NET8_0_OR_GREATER
 #pragma warning disable CS8600, CS8601, CS8602, CS8603, CS8604, CS8618

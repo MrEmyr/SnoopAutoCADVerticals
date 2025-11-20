@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.1.2 Chrome/138.0.7204.243 Electron/37.4.0 Safari/537.36" version="28.1.2">
   <diagram name="UnifiedSnoop Main Form Layout" id="main-form-layout">
-    <mxGraphModel dx="2593" dy="1529" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -13,8 +13,47 @@
         <mxCell id="lbl-property-count" value="Property Count Label&#xa;Text: &#39;Ready&#39; / &#39;Properties: X&#39;&#xa;Color: Blue (Bold)&#xa;Dock: Fill" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="1" vertex="1">
           <mxGeometry x="60" y="92.5" width="1060" height="25" as="geometry" />
         </mxCell>
+        <mxCell id="toolbar-panel" value="Toolbar Panel (Dock.Top)&#xa;Height: 40px&#xa;Padding: 5px" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="50" y="130" width="1100" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-select" value="Select Object" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="70" y="150" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-refresh" value="Refresh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="200" y="150" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-export" value="Export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="290" y="150" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-compare" value="Compare" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="380" y="150" width="90" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-bookmark" value="Add Bookmark" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="480" y="150" width="120" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-view-bookmarks" value="View Bookmarks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="610" y="150" width="130" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="search-panel-main" value="Search Panel (Dock.Top in Main Area)&#xa;Height: 40px - Spans entire width" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d0cee2;strokeColor=#56517e;verticalAlign=top;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="50" y="185" width="1100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl-search-main" value="Search Properties:" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="70" y="203" width="130" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="txt-search-main" value="[Search TextBox - Width: 300]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="210" y="203" width="250" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-clear-main" value="Clear" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="470" y="203" width="70" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-copy-value-main" value="Copy Value" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="550" y="203" width="100" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="btn-copy-all-main" value="Copy All" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="660" y="203" width="90" height="25" as="geometry" />
+        </mxCell>
         <mxCell id="main-content-area" value="Main Content Area (Below Search)&#xa;Simple Panel + Splitter Layout" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;fontStyle=1" parent="1" vertex="1">
-          <mxGeometry x="50" y="220" width="1100" height="475" as="geometry" />
+          <mxGeometry x="50" y="235" width="1100" height="460" as="geometry" />
         </mxCell>
         <mxCell id="left-panel" value="Left Panel (Dock.Left)&#xa;Width: 400px&#xa;BorderStyle: Fixed3D" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;verticalAlign=top;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="60" y="260" width="400" height="420" as="geometry" />
@@ -47,10 +86,10 @@
           <mxGeometry x="1240" y="100" width="160" height="25" as="geometry" />
         </mxCell>
         <mxCell id="legend-toolbar" value="Toolbar Panel" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
-          <mxGeometry x="1239" y="130" width="160" height="25" as="geometry" />
+          <mxGeometry x="1240" y="130" width="160" height="25" as="geometry" />
         </mxCell>
         <mxCell id="legend-splitter" value="Draggable Splitter Bar" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#666666;strokeColor=#000000;fontColor=#FFFFFF;" parent="1" vertex="1">
-          <mxGeometry x="1239" y="160" width="160" height="25" as="geometry" />
+          <mxGeometry x="1240" y="160" width="160" height="25" as="geometry" />
         </mxCell>
         <mxCell id="legend-left" value="TreeView (Left Panel)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;" parent="1" vertex="1">
           <mxGeometry x="1240" y="190" width="160" height="25" as="geometry" />
@@ -69,51 +108,6 @@
         </mxCell>
         <mxCell id="notes-text" value="Key Dimensions:&#xa;• Form: 1200x700&#xa;• MinSize: 600x400&#xa;• Top Panel: 35px&#xa;• Toolbar: 40px&#xa;• Search Panel: 40px&#xa;• Bottom Panel: 25px&#xa;• Splitter: 4px width&#xa;• Left Panel: 400px (fixed)&#xa;&#xa;Dock Order (CRITICAL):&#xa;1. Bottom Panel (Bottom)&#xa;2. Top Panel (Top)&#xa;3. Toolbar Panel (Top)&#xa;4. Search Panel (Top)&#xa;5. Right Panel (Fill)&#xa;6. Splitter (Left)&#xa;7. Left Panel (Left)&#xa;&#xa;Layout Hierarchy:&#xa;MainForm&#xa;├─ Search Panel (Top)&#xa;├─ Left Panel (Left)&#xa;├─ Splitter (Left)&#xa;└─ Right Panel (Fill)&#xa;   └─ ListView (Fill)&#xa;&#xa;Colors:&#xa;• Normal Rows: White&#xa;• Collections: #FFFFCC&#xa;• Events: #E0FFE0&#xa;• Errors: #FFE0E0&#xa;&#xa;Keyboard Shortcuts:&#xa;• F5: Refresh&#xa;• Ctrl+C: Copy Value&#xa;• Ctrl+F: Focus Search&#xa;• Ctrl+B: Add Bookmark" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=left;verticalAlign=top;fontStyle=0;fontSize=10;" parent="1" vertex="1">
           <mxGeometry x="1230" y="365" width="180" height="380" as="geometry" />
-        </mxCell>
-        <mxCell id="6laLPpYrBM0yrIYwx3Ib-2" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="50" y="141" width="700" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="toolbar-panel" value="Toolbar Panel (Dock.Top)&#xa;Height: 40px&#xa;Padding: 5px" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;fontStyle=1" parent="6laLPpYrBM0yrIYwx3Ib-2" vertex="1">
-          <mxGeometry width="490" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-select" value="Select Object" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-2" vertex="1">
-          <mxGeometry x="3" y="21.82" width="77" height="27.27" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-refresh" value="Refresh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-2" vertex="1">
-          <mxGeometry x="83" y="21.82" width="67" height="27.27" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-export" value="Export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-2" vertex="1">
-          <mxGeometry x="154" y="21.82" width="66" height="27.27" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-compare" value="Compare" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-2" vertex="1">
-          <mxGeometry x="222" y="21.82" width="68" height="27.27" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-bookmark" value="Add Bookmark" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-2" vertex="1">
-          <mxGeometry x="293" y="21.82" width="87" height="27.27" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-view-bookmarks" value="View Bookmarks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-2" vertex="1">
-          <mxGeometry x="383" y="21.82" width="97" height="27.27" as="geometry" />
-        </mxCell>
-        <mxCell id="6laLPpYrBM0yrIYwx3Ib-3" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="542" y="130" width="710" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="search-panel-main" value="Search Panel (Dock.Top in Main Area)&#xa;Height: 40px - Spans entire width" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d0cee2;strokeColor=#56517e;verticalAlign=top;fontStyle=1" parent="6laLPpYrBM0yrIYwx3Ib-3" vertex="1">
-          <mxGeometry y="11" width="610" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl-search-main" value="Search Properties:" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1" parent="6laLPpYrBM0yrIYwx3Ib-3" vertex="1">
-          <mxGeometry x="5" y="29" width="115" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="txt-search-main" value="[Search TextBox - Width: TBD]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" parent="6laLPpYrBM0yrIYwx3Ib-3" vertex="1">
-          <mxGeometry x="123" y="29" width="217" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-clear-main" value="Clear" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-3" vertex="1">
-          <mxGeometry x="343" y="29" width="70" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-copy-value-main" value="Copy Value" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-3" vertex="1">
-          <mxGeometry x="416" y="29" width="84" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="btn-copy-all-main" value="Copy All" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="6laLPpYrBM0yrIYwx3Ib-3" vertex="1">
-          <mxGeometry x="502" y="29" width="90" height="25" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

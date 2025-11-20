@@ -30,6 +30,7 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
     <DefineConstants>$(DefineConstants);NET8_0_OR_GREATER</DefineConstants>
     <ImplicitUsings>disable</ImplicitUsings>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <!-- AutoCAD 2024 References (.NET Framework 4.8) -->
@@ -52,6 +53,16 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
     <PackageReference Include="AutoCAD.NET" Version="25.0.1" />
     <PackageReference Include="AutoCAD.NET.Model" Version="25.0.0" />
+  </ItemGroup>
+
+  <!-- Reference to UnifiedSnoop project for shared services -->
+  <!-- Private=False means don't copy UnifiedSnoop.dll to XRecordEditor output -->
+  <!-- This avoids duplicate class errors while still allowing compile-time access -->
+  <ItemGroup>
+    <ProjectReference Include="..\UnifiedSnoop.csproj">
+      <Private>False</Private>
+      <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

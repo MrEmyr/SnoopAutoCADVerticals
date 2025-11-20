@@ -1,11 +1,98 @@
 {
-  "version": "1.0.9",
-  "buildDate": "2025-11-20 10:21:39",
+  "version": "1.0.18",
+  "buildDate": "2025-11-20 15:00:02",
   "components": {
-    "UnifiedSnoop": "1.0.9",
-    "XRecordEditor": "1.0.0"
+    "UnifiedSnoop": "1.0.18",
+    "XRecordEditor": "1.0.1"
   },
   "changelog": [
+    {
+      "version": "1.0.18",
+      "date": "2025-11-20",
+      "changes": [
+        "CRITICAL FIX: Resolved UI panel overlap issues causing obscured headers",
+        "REDESIGN: Toolbar and Search panels now side-by-side in horizontal container",
+        "FIX: Corrected docking order to prevent ListView header being hidden",
+        "IMPROVEMENT: Toolbar panel (490px left) + Search panel (fill right) layout",
+        "TECHNICAL: Added _toolbarContainerPanel to hold both panels with proper docking"
+      ]
+    },
+    {
+      "version": "1.0.17",
+      "date": "2025-11-20",
+      "changes": [
+        "Clean rebuild and redeploy of v1.0.16 fix (search panel now properly added to form)"
+      ]
+    },
+    {
+      "version": "1.0.16",
+      "date": "2025-11-20",
+      "changes": [
+        "CRITICAL FIX: Actually ADD search panel to form (was created but never added!)",
+        "FIX: Search panel now properly visible spanning full width",
+        "LESSON: Creating a control ≠ adding it to the form - must add to Controls collection"
+      ]
+    },
+    {
+      "version": "1.0.15",
+      "date": "2025-11-20",
+      "changes": [
+        "REDESIGN: Moved search panel OUT of right panel to main content area",
+        "FIX: Search panel now spans entire width above both TreeView and ListView",
+        "FIX: ListView headers are now ALWAYS visible (no docking conflicts)",
+        "LESSON: Nested docking causes conflicts - keep panels at same hierarchy level"
+      ]
+    },
+    {
+      "version": "1.0.14",
+      "date": "2025-11-20",
+      "changes": [
+        "FIX: FINAL ListView header fix - reversed control add order (Windows Forms docking rule)",
+        "FIX: Increased search panel height to 50px with 15px bottom padding",
+        "LESSON: Top-docked controls must be added LAST to parent (not first)"
+      ]
+    },
+    {
+      "version": "1.0.13",
+      "date": "2025-11-20",
+      "changes": [
+        "FIX: Corrected control ordering - search panel now docks before ListView",
+        "FIX: ListView headers are now fully visible (no more obscured column headers)",
+        "Simple fix - Top-docked controls must be added before Fill-docked controls"
+      ]
+    },
+    {
+      "version": "1.0.12",
+      "date": "2025-11-20",
+      "changes": [
+        "MAJOR UI REDESIGN: Replaced problematic SplitContainer with simple Panel layout",
+        "NEW: Users can now manually resize panels using draggable Splitter bar",
+        "FIX: Eliminated all SplitterDistance constraint errors",
+        "IMPROVED: Simpler, more robust UI with basic Panel + Splitter approach",
+        "The UI is now much more reliable and user-friendly"
+      ]
+    },
+    {
+      "version": "1.0.11",
+      "date": "2025-11-20",
+      "changes": [
+        "CRITICAL FIX: Resolved SplitterDistance initialization crash during form construction",
+        "FIX: Added safe initial SplitterDistance value (400) to prevent layout constraint errors",
+        "FIX: XRecordEditor now builds with RuntimeIdentifier for proper 2025+ deployment path",
+        "The form now loads without crashes in both Civil 3D 2024 and 2025+"
+      ]
+    },
+    {
+      "version": "1.0.10",
+      "date": "2025-11-20",
+      "changes": [
+        "CRITICAL FIX: Resolved 'Assembly with same name is already loaded' error in Civil 3D",
+        "ARCHITECTURE: Removed duplicate ErrorLogService and TransactionHelper from XRecordEditor",
+        "ARCHITECTURE: XRecordEditor now references UnifiedSnoop.dll for shared services",
+        "ARCHITECTURE: Maintains separate DLLs while eliminating duplicate class conflicts",
+        "Both DLLs can now be deployed separately without assembly conflicts"
+      ]
+    },
     {
       "version": "1.0.9",
       "date": "2025-11-20",
